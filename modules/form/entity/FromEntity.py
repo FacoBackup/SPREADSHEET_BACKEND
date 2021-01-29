@@ -1,7 +1,10 @@
 from sqlalchemy import BigInteger, Text, Column
+from sqlalchemy.ext.declarative import declarative_base
+
+Base = declarative_base()
 
 
-class Form:
+class Form(Base):
     __tablename__ = "form"
     name = Column(Text)
     id = Column(BigInteger, autoincrement=True, primary_key=True)

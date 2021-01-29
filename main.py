@@ -1,16 +1,48 @@
-# This is a sample Python script.
+from flask import Flask, request, jsonify
+from modules.user.dao import UserDAO
+from modules.user.service.factory import UserFactory
+from sqlalchemy import create_engine, MetaData
+from sqlalchemy.orm import sessionmaker
 
-# Press Shift+F10 to execute it or replace it with your code.
-# Press Double Shift to search everywhere for classes, files, tool windows, actions, and settings.
+meta = MetaData()
+app = Flask(__name__)
+engine = create_engine('postgresql://api:12345@localhost:5432/api_db')
+Session = sessionmaker(bind=engine)
+Session = Session()
+meta.create_all(engine)
 
 
-def print_hi(name):
-    # Use a breakpoint in the code line below to debug your script.
-    print(f'Hi, {name}')  # Press Ctrl+F8 to toggle the breakpoint.
+@app.route('/test', methods={'GET'})
+def test_route():
+    return "HTTPStatus.OK"
 
 
-# Press the green button in the gutter to run the script.
+@app.route('/user', methods={'POST'})
+def create_user():
+    data = request.json
+    result = UserFactory.user_factory(name=data['name'], about=data['about'], nationality=data['nationality'],
+                                          birth=data['birth'],
+                                          study=data['study'], pic=data['pic'], email=data['email'],
+                                          phone=data['phone'])
+
+    return "OK"
+
+
+@app.route('/all/users', methods={'GET'})
+async def read_all_users():
+    query = await UserDAO.read_all_users()
+    if query is not None:
+        return query
+    else:
+        return "query"
+
+
+@app.route('/get/user', methods={'PATCH'})
+def get_user():
+    data = request.json
+    UserDAO.read_user(data.user_id)
+    return jsonify()
+
+
 if __name__ == '__main__':
-    print_hi('PyCharm')
-
-# See PyCharm help at https://www.jetbrains.com/help/pycharm/
+    app.run(debug=True, port=5000)

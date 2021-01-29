@@ -1,7 +1,10 @@
 from sqlalchemy import BigInteger, Text, Column, ForeignKey
+from sqlalchemy.ext.declarative import declarative_base
+
+Base = declarative_base()
 
 
-class FormField:
+class FormField(Base):
     __tablename__ = "form_field"
     id = Column(BigInteger, autoincrement=True, primary_key=True)
     name = Column(Text)
