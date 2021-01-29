@@ -27,9 +27,10 @@ async def check_user_by_field(email, name, phone):
         return False
 
 
-async def read_user(user_id):
+def read_user(user_id):
     try:
-        return await select(User).where(User.id == user_id).first()
+        print(user_id)
+        return select(User).where(User.id == user_id).first()
     except IntegrityError:
         return None
     except SQLAlchemyError:
