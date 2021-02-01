@@ -1,5 +1,5 @@
 from src.group.models import Group, GroupMembership
-from src.user.models import User
+from rest_framework import status
 from django.core import exceptions, serializers
 
 
@@ -11,10 +11,10 @@ def search_group(search_input):
 
             return query
         else:
-            return 500
+            return status.HTTP_500_INTERNAL_SERVER_ERROR
 
     except exceptions.ObjectDoesNotExist:
-        return 500
+        return status.HTTP_500_INTERNAL_SERVER_ERROR
 
 
 def read_group(group_id):
@@ -25,10 +25,10 @@ def read_group(group_id):
 
             return query
         else:
-            return 500
+            return status.HTTP_500_INTERNAL_SERVER_ERROR
 
     except exceptions.ObjectDoesNotExist:
-        return 500
+        return status.HTTP_500_INTERNAL_SERVER_ERROR
 
 
 def read_groups_user(user_id):
@@ -41,10 +41,10 @@ def read_groups_user(user_id):
 
             return query
         else:
-            return 500
+            return status.HTTP_500_INTERNAL_SERVER_ERROR
 
     except exceptions.ObjectDoesNotExist:
-        return 500
+        return status.HTTP_500_INTERNAL_SERVER_ERROR
 
 
 def read_groups_user_max_id(user_id, max_id):
@@ -58,7 +58,7 @@ def read_groups_user_max_id(user_id, max_id):
 
             return query
         else:
-            return 500
+            return status.HTTP_500_INTERNAL_SERVER_ERROR
 
     except exceptions.ObjectDoesNotExist:
-        return 500
+        return status.HTTP_500_INTERNAL_SERVER_ERROR

@@ -4,7 +4,7 @@ from src.user.models import User
 
 class Form(models.Model):
     id = models.BigAutoField(primary_key=True)
-    name = models.TextField()
+    name = models.TextField(unique=True)
     about = models.TextField(null=True, blank=True)
 
     def __int__(self):
@@ -17,7 +17,6 @@ class FormAccess(models.Model):
 
 
 class FormField(models.Model):
-    db_table = '"form_field"'
     id = models.BigAutoField(primary_key=True)
     form_fk = models.ForeignKey(Form, on_delete=models.CASCADE)
     name = models.TextField()
@@ -27,10 +26,10 @@ class FormField(models.Model):
 
 
 class FormContent(models.Model):
-    db_table = '"form_content"'
+    id = models.BigAutoField(primary_key=True)
     field_fk = models.ForeignKey(FormField, on_delete=models.CASCADE)
     content = models.TextField()
     creator = models.ForeignKey(User, on_delete=models.CASCADE)
 
     def __int__(self):
-        return self.field_fk
+        return self.id
