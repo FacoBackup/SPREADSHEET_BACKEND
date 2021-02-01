@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/AEB_API_PROJECT.iml" filepath="$PROJECT_DIR$/.idea/AEB_API_PROJECT.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/AEB_REST_API.iml" filepath="$PROJECT_DIR$/.idea/AEB_REST_API.iml" />
     </modules>
   </component>
 </project>
