@@ -1,11 +1,13 @@
 from django.db import models
 from src.user.models import User
+from src.group.models import Group
 
 
 class Form(models.Model):
     id = models.BigAutoField(primary_key=True)
     name = models.TextField(unique=True)
     about = models.TextField(null=True, blank=True)
+    group_fk = models.ForeignKey(Group, on_delete=None)
 
     def __int__(self):
         return self.id

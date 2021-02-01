@@ -4,9 +4,9 @@ from django.core import exceptions
 from src.form.models import Form, FormField, FormAccess, FormContent
 
 
-def create_form(name, about, requester):
+def create_form(name, about, group_id, requester):
     try:
-        form = Form(name=name, about=about)
+        form = Form(name=name, about=about, group_fk=group_id)
         form.save()
         form_access = FormAccess(user_fk=requester, form_fk=form)
         form_access.save()
