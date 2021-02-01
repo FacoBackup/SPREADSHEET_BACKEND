@@ -1,4 +1,4 @@
-from rest_framework_simplejwt.tokens import AccessToken
+# from rest_framework_simplejwt.tokens import AccessToken
 from src.user.services import UserRead
 import json
 import jwt

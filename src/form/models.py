@@ -7,7 +7,8 @@ class Form(models.Model):
     id = models.BigAutoField(primary_key=True)
     name = models.TextField(unique=True)
     about = models.TextField(null=True, blank=True)
-    group_fk = models.ForeignKey(Group, on_delete=None)
+    group_fk = models.ForeignKey(Group, on_delete=models.DO_NOTHING)
+    creator_fk = models.ForeignKey(User, null=True, on_delete=models.SET_NULL)
 
     def __int__(self):
         return self.id

@@ -1,5 +1,4 @@
 import json
-from django.http import JsonResponse
 from rest_framework import status
 from rest_framework.decorators import (api_view as route)
 from rest_framework.response import Response as callRespond
@@ -30,7 +29,7 @@ def get_user_by_id(request):
     if data is not None:
         return callRespond(json.loads(data))
     else:
-        return callRespond(404)
+        return callRespond(status.HTTP_404_NOT_FOUND)
 
 
 @route(['PATCH'])
@@ -41,9 +40,10 @@ def get_user_by_max_id(request):
     else:
         return callRespond(404)
 
+
 @route(['GET'])
 def get_users(request):
-    return callRespond(UserRead.read_users())
+    return callRespond(json.loads(UserRead.read_users()))
 
 
 @route(['POST'])

@@ -39,10 +39,9 @@ def read_user_by_id(user_id):
             print(query)
             return query
         else:
-            print("RETURNING NONE")
+
             return None
     except exceptions.ObjectDoesNotExist:
-        print("RETURNING NONE")
         return None
 
 
@@ -63,13 +62,9 @@ def read_all_users():
 def read_user_by_max_id(max_id):
     try:
         user_query = User.objects.filter(id__lt=max_id)
-        if user_query:
-            query = serializers.serialize("json", user_query)
+        query = serializers.serialize("json", user_query)
 
-            return query
-        else:
-            return status.HTTP_500_INTERNAL_SERVER_ERROR
-
+        return query
     except exceptions.ObjectDoesNotExist:
         return status.HTTP_500_INTERNAL_SERVER_ERROR
 
@@ -77,11 +72,7 @@ def read_user_by_max_id(max_id):
 def read_users():
     try:
         user_query = User.objects.order_by('-id').all()[:10]
-        test = []
-        if test:
-            print("Empty")
-        else:
-            print("is not empty ")
+
         return serializers.serialize("json", user_query)
 
     except exceptions.ObjectDoesNotExist:

@@ -6,12 +6,8 @@ from django.core import exceptions, serializers
 def search_group(search_input):
     try:
         group_query = Group.objects.filter(name=search_input)
-        if group_query is not None:
-            query = serializers.serialize("json", group_query)
 
-            return query
-        else:
-            return status.HTTP_500_INTERNAL_SERVER_ERROR
+        return serializers.serialize("json", group_query)
 
     except exceptions.ObjectDoesNotExist:
         return status.HTTP_500_INTERNAL_SERVER_ERROR

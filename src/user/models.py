@@ -2,7 +2,7 @@ from django.db import models
 
 
 class User(models.Model):
-    db_table = '"user"'
+
     id = models.BigAutoField(primary_key=True)
     name = models.TextField()
     email = models.CharField(max_length=320, unique=True)

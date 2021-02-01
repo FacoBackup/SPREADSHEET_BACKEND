@@ -6,7 +6,7 @@ from src.form.models import Form, FormField, FormAccess, FormContent
 
 def create_form(name, about, group_id, requester):
     try:
-        form = Form(name=name, about=about, group_fk=group_id)
+        form = Form(name=name, about=about, group_fk=group_id, creator_fk=requester)
         form.save()
         form_access = FormAccess(user_fk=requester, form_fk=form)
         form_access.save()
