@@ -1,5 +1,6 @@
 from src.user.models import User
 from django.core import exceptions
+from rest_framework import status
 
 
 def create_user(
@@ -21,8 +22,8 @@ def create_user(
                             study=study,
                             nationality=nationality)
         created_user.save()
-        return 201
+        return status.HTTP_201_CREATED
     except exceptions.FieldError:
-        return 500
+        return status.HTTP_500_INTERNAL_SERVER_ERROR
     except exceptions.PermissionDenied:
-        return 500
+        return status.HTTP_500_INTERNAL_SERVER_ERROR

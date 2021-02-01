@@ -1,6 +1,7 @@
 from src.user.models import User
 from django.core import exceptions, serializers
 from django.db.models import Q
+from rest_framework import status
 
 
 def search_user(search_input):
@@ -11,9 +12,9 @@ def search_user(search_input):
 
             return query
         else:
-            return 500
+            return status.HTTP_500_INTERNAL_SERVER_ERROR
     except exceptions.ObjectDoesNotExist:
-        return 500
+        return status.HTTP_500_INTERNAL_SERVER_ERROR
 
 
 def read_user_by_email(email):
@@ -53,10 +54,10 @@ def read_all_users():
 
             return query
         else:
-            return 500
+            return status.HTTP_500_INTERNAL_SERVER_ERROR
 
     except exceptions.ObjectDoesNotExist:
-        return 500
+        return status.HTTP_500_INTERNAL_SERVER_ERROR
 
 
 def read_user_by_max_id(max_id):
@@ -67,10 +68,10 @@ def read_user_by_max_id(max_id):
 
             return query
         else:
-            return 500
+            return status.HTTP_500_INTERNAL_SERVER_ERROR
 
     except exceptions.ObjectDoesNotExist:
-        return 500
+        return status.HTTP_500_INTERNAL_SERVER_ERROR
 
 
 def read_users():
@@ -84,4 +85,4 @@ def read_users():
         return serializers.serialize("json", user_query)
 
     except exceptions.ObjectDoesNotExist:
-        return 500
+        return status.HTTP_500_INTERNAL_SERVER_ERROR

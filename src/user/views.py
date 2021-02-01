@@ -27,16 +27,19 @@ def create_user(request):
 @route(['PATCH'])
 def get_user_by_id(request):
     data = UserRead.read_user_by_id(request.data['id'])
-    print(data)
-    return callRespond(json.loads(data))
+    if data is not None:
+        return callRespond(json.loads(data))
+    else:
+        return callRespond(404)
 
 
 @route(['PATCH'])
 def get_user_by_max_id(request):
     data = UserRead.read_user_by_max_id(request.data['max_id'])
-    # JsonResponse(UserRead.read_user_by_max_id(request.data['max_id']), safe=False)
-    return callRespond(json.loads(data))
-
+    if data is not None:
+        return callRespond(json.loads(data))
+    else:
+        return callRespond(404)
 
 @route(['GET'])
 def get_users(request):
