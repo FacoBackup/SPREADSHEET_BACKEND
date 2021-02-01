@@ -1,7 +1,47 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="69a6181c-43c9-4fd3-a062-8768f4402a8a" name="Default Changelist" comment="" />
+    <list default="true" id="69a6181c-43c9-4fd3-a062-8768f4402a8a" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/AEB_REST_API.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/AEB_REST_API.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/form/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/form/models.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/form_content/__init__.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/form_content/admin.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/form_content/apps.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/form_content/migrations/__init__.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/form_content/models.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/form_content/tests.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/form_content/views.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/form_field/__init__.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/form_field/admin.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/form_field/apps.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/form_field/migrations/__init__.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/form_field/models.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/form_field/tests.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/form_field/views.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/form_management/__init__.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/form_management/admin.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/form_management/apps.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/form_management/migrations/__init__.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/form_management/models.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/form_management/tests.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/form_management/views.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/group/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/group/models.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/group/services/GroupFactory.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/group/services/GroupFactory.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/group/services/GroupReader.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/group/services/GroupReader.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/group_management/__init__.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/group_management/admin.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/group_management/apps.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/group_management/migrations/__init__.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/group_management/models.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/group_management/tests.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/group_management/views.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/settings.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/settings.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/urls.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/user/services/UserRead.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/user/services/UserRead.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/user/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/user/views.py" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -14,6 +54,9 @@
       </list>
     </option>
   </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
   <component name="ProjectId" id="1npqjZQ9A4AYFVEXYQ6Qdy1053V" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
@@ -22,6 +65,7 @@
   <component name="PropertiesComponent">
     <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
+    <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$/AEB_REST_API/user" />
   </component>
   <component name="RecentsManager">
@@ -47,5 +91,16 @@
       <updated>1612097515703</updated>
     </task>
     <servers />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
   </component>
 </project>

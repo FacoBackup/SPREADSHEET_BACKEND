@@ -23,5 +23,6 @@ urlpatterns = [
     path('api/user', views.create_user, name="create_user"),
     path('api/get/user/by_id', views.get_user_by_id, name="get_user"),
     path('api/get/users', views.get_users, name="get_users"),
-    path('api/get/users/by_max_id', views.get_user_by_max_id, name="get_users_by_max_id")
+    path('api/get/users/by_max_id', views.get_user_by_max_id, name="get_users_by_max_id"),
+    path('api/sign_in', views.sign_in, name="sign_in")
 ]
