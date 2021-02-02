@@ -32,7 +32,6 @@ class FormContent(models.Model):
     id = models.BigAutoField(primary_key=True)
     field_fk = models.ForeignKey(FormField, on_delete=models.CASCADE)
     content = models.TextField()
-    creator = models.ForeignKey(User, on_delete=models.CASCADE)
 
     def __int__(self):
         return self.id

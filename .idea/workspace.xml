@@ -6,9 +6,11 @@
       <change beforePath="$PROJECT_DIR$/src/form/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/form/models.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/form/services/FormFactory.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/form/services/FormFactory.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/form/services/FormRead.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/form/services/FormRead.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/form/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/form/views.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/group/services/GroupFactory.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/group/services/GroupFactory.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/group/services/GroupReader.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/group/services/GroupReader.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/user/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/user/models.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/user/services/Auth.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/user/services/Auth.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/group/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/group/views.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/urls.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/user/services/UserRead.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/user/services/UserRead.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/user/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/user/views.py" afterDir="false" />
     </list>

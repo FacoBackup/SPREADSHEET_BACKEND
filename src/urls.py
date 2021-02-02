@@ -15,14 +15,34 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from src.user import views
+from src.user import views as user_views
+from src.group import views as group_views
+from src.form import views as form_views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('api/test', views.test, name="test"),
-    path('api/user', views.create_user, name="create_user"),
-    path('api/get/user/by_id', views.get_user_by_id, name="get_user"),
-    path('api/get/users', views.get_users, name="get_users"),
-    path('api/get/users/by_max_id', views.get_user_by_max_id, name="get_users_by_max_id"),
-    path('api/sign_in', views.sign_in, name="sign_in")
+    # USER
+    path('api/test', user_views.test, name="test"),
+    path('api/user', user_views.create_user, name="create_user"),
+    path('api/get/user/by_id', user_views.get_user_by_id, name="get_user"),
+    path('api/get/users', user_views.get_users, name="get_users"),
+    path('api/get/users/by_max_id', user_views.get_user_by_max_id, name="get_users_by_max_id"),
+    path('api/sign_in', user_views.sign_in, name="sign_in"),
+    # USER
+
+    # GROUP
+    path('api/group', group_views.create_group, name="create_group"),
+    path('api/get/group', group_views.get_group, name="get_group"),
+    path('api/get/groups', group_views.get_groups_by_user, name="get_groups"),
+    path('api/get/groups/by_max_id', group_views.get_groups_by_user_max_id, name="get_groups_by_max_id"),
+    # GROUP
+
+    # FORM
+    path('api/form', form_views.create_form, name="create_form"),
+    path('api/form/field', form_views.create_form_field, name="create_form_field"),
+    path('api/form/content', form_views.create_field_content, name="create_form_content"),
+    path('api/get/form/field', form_views.read_form_fields, name="get_form_fields"),
+    path('api/get/form/content', form_views.read_form_content, name="get_form_content"),
+    path('api/get/field/content', form_views.read_field_content, name="get_form_field_content"),
+    # FORM
 ]
