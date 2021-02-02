@@ -53,39 +53,51 @@ class RepositoryFactory:
         except exceptions.PermissionDenied:
             return status.HTTP_500_INTERNAL_SERVER_ERROR
 
+    # {
+    #     "commit_message": "COMMIT MESSAGE",
+    #     "branch_id": 19826738,
+    #     "data": [
+    #         {
+    #             "column_id": 123,
+    #             "row_id": 1234412,
+    #             "new_content": "THIS IS AN EDITED CELL"
+    #         },
+    #         {
+    #             "column_id": 12334554,
+    #             "row_id": 1234412123,
+    #             "new_content": "THIS IS AN EDITED CELL"
+    #         },
+    #         {
+    #             "column_id": 123213,
+    #             "row_id": 1234411232,
+    #             "new_content": "THIS IS AN EDITED CELL"
+    #         },
+    #         {
+    #             "column_id": 123213,
+    #             "row_id": null,
+    #             "new_content": "THIS CELL WAS CREATED NOW"
+    #         }
+    #     ]
+    # }
 
     @staticmethod
-    def save_changes(branch_id, columns, rows, commit_message, requester):
+    def save_changes(data, requester):
         try:
+            branch = Branch.objects.get(id=data['branch_id'], user_fk=requester)
+            if branch is not None:
 
+                RepositoryFactory.__create_commit(changes=len(data['data']),
+                                                  branch_id=data['branch_id'],
+                                                  message=data['commit_message'])
+            # TODO: Needs the rest of the code for saving changes
         except exceptions.FieldError:
             return status.HTTP_500_INTERNAL_SERVER_ERROR
         except exceptions.PermissionDenied:
             return status.HTTP_500_INTERNAL_SERVER_ERROR
 
     @staticmethod
-    def create_commit(columns, rows, branch_id, message):
+    def __create_commit(changes, branch_id, message):
         try:
-            old_columns = FormRead.FormReadService.read_columns(branch_id=branch_id)
-            old_rows = FormRead.FormReadService.read_all_rows_from_branch(branch_id)
-            columns.sort(key=RepositoryFactory.__extract_id)
-            rows.sort(key=RepositoryFactory.__extract_id)
-            changes = 0
-
-            for i in columns:
-                if i < len(old_columns) and old_columns[i] != columns[i]:
-                    changes += 1
-
-                elif i > len(old_columns):
-                    changes += 1
-
-            for j in rows:
-                if j < len(old_rows) and old_rows[j] != rows[j]:
-                    changes += 1
-
-                elif j > len(old_rows):
-                    changes += 1
-
             commit = Commit(message=message,
                             changes=changes,
                             branch_fk=Branch.objects.only("id").get(id=branch_id),
