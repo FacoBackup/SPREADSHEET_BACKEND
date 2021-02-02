@@ -26,7 +26,7 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.BigAutoField(primary_key=True, serialize=False)),
                 ('name', models.TextField()),
-                ('form_fk', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='form.form')),
+                ('form_fk', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='repository.repository')),
             ],
         ),
         migrations.CreateModel(
@@ -35,14 +35,14 @@ class Migration(migrations.Migration):
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('content', models.TextField()),
                 ('creator', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='user.user')),
-                ('field_fk', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='form.formfield')),
+                ('field_fk', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='repository.formfield')),
             ],
         ),
         migrations.CreateModel(
             name='FormAccess',
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('form_fk', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='form.form')),
+                ('form_fk', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='repository.repository')),
                 ('user_fk', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='user.user')),
             ],
         ),

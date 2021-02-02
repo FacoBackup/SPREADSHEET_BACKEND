@@ -17,7 +17,7 @@ from django.contrib import admin
 from django.urls import path
 from src.user import views as user_views
 from src.group import views as group_views
-from src.form import views as form_views
+from src.repository import views as form_views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -37,11 +37,11 @@ urlpatterns = [
     # GROUP
 
     # FORM
-    path('api/form', form_views.create_form, name="create_form"),
-    path('api/form/field', form_views.create_form_field, name="create_form_field"),
-    path('api/form/content', form_views.create_field_content, name="create_form_content"),
-    path('api/get/form/field', form_views.read_form_fields, name="get_form_fields"),
-    path('api/get/form/content', form_views.read_form_content, name="get_form_content"),
+    path('api/repository', form_views.create_form, name="create_form"),
+    path('api/repository/field', form_views.create_form_field, name="create_form_field"),
+    path('api/repository/content', form_views.create_field_content, name="create_form_content"),
+    path('api/get/repository/field', form_views.read_form_fields, name="get_form_fields"),
+    path('api/get/repository/content', form_views.read_form_content, name="get_form_content"),
     path('api/get/field/content', form_views.read_field_content, name="get_form_field_content"),
     # FORM
 ]

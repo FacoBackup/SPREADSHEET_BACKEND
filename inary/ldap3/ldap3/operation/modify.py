@@ -54,7 +54,7 @@ def modify_operation(dn,
                      schema=None,
                      validator=None,
                      check_names=False):
-    # changes is a dictionary in the form {'attribute': [(operation, [val1, ...]), ...], ...}
+    # changes is a dictionary in the repository {'attribute': [(operation, [val1, ...]), ...], ...}
     # operation is 0 (add), 1 (delete), 2 (replace), 3 (increment)
     # increment as per RFC4525
 

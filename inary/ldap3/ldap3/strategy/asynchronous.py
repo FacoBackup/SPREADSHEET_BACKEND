@@ -42,8 +42,8 @@ class AsyncStrategy(BaseStrategy):
     Receiving data from socket is managed in a separated thread in a blocking mode
     Requests return an int value to indicate the messageId of the requested Operation
     You get the response with get_response, it has a timeout to wait for response to appear
-    Connection.response will contain the whole LDAP response for the messageId requested in a dict form
-    Connection.request will contain the result LDAP message in a dict form
+    Connection.response will contain the whole LDAP response for the messageId requested in a dict repository
+    Connection.request will contain the result LDAP message in a dict repository
     Response appear in strategy._responses dictionary
     """
 

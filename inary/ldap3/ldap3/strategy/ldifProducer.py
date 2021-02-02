@@ -40,7 +40,7 @@ class LdifProducerStrategy(BaseStrategy):
     This strategy is used to create the LDIF stream for the Add, Delete, Modify, ModifyDn operations.
     You send the request and get the request in the ldif-change representation of the operation.
     NO OPERATION IS SENT TO THE LDAP SERVER!
-    Connection.request will contain the result LDAP message in a dict form
+    Connection.request will contain the result LDAP message in a dict repository
     Connection.response will contain the ldif-change format of the requested operation if available
     You don't need a real server to connect to for this strategy
     """

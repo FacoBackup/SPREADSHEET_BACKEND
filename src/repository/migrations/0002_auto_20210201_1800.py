@@ -8,18 +8,18 @@ class Migration(migrations.Migration):
 
     dependencies = [
         ('group', '0001_initial'),
-        ('form', '0001_initial'),
+        ('repository', '0001_initial'),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='form',
+            model_name='repository',
             name='group_fk',
             field=models.ForeignKey(default=2, on_delete=django.db.models.deletion.CASCADE, to='group.group'),
             preserve_default=False,
         ),
         migrations.AlterField(
-            model_name='form',
+            model_name='repository',
             name='name',
             field=models.TextField(unique=True),
         ),

@@ -1,7 +1,7 @@
 import json
 from rest_framework.decorators import (api_view as route)
 from rest_framework.response import Response as callRespond
-from src.form.services import FormRead, FormFactory
+from src.repository.services import FormFactory, FormRead
 from rest_framework.views import APIView
 
 
@@ -17,21 +17,21 @@ class FormViews(APIView):
     @route(['POST'])
     def create_form_field(self, request):
         return callRespond(
-            FormFactory.FormFactory.create_form_field(name=request.data['name'], form_id=request.data['form_id'])
+            FormFactory.FormFactory.create_column(name=request.data['name'], form_id=request.data['form_id'])
         )
 
     @route(['POST'])
     def create_field_content(self, request):
         return callRespond(
-            FormFactory.FormFactory.create_form_field_content(content=request.data['content'], requester=1,
-                                                              form_field_id=request.data['form_field_id'])
+            FormFactory.FormFactory.create_row(content=request.data['content'], requester=1,
+                                               form_field_id=request.data['form_field_id'])
         )
 
     @route(['PATCH'])
     def read_form_content(self, request):
         return callRespond(
             json.loads(
-                FormRead.FormReadService.read_all_content_form(form_id=request.data['form_id'])
+                FormRead.FormReadService.read_all_content_by_branch(form_id=request.data['form_id'])
             )
         )
 
@@ -39,7 +39,7 @@ class FormViews(APIView):
     def read_form_fields(self, request):
         return callRespond(
             json.loads(
-                FormRead.FormReadService.read_form_fields(form_id=request.data['form_id'])
+                FormRead.FormReadService.read_columns(form_id=request.data['form_id'])
             )
         )
 
@@ -47,6 +47,6 @@ class FormViews(APIView):
     def read_field_content(self, request):
         return callRespond(
             json.loads(
-                FormRead.FormReadService.read_form_field_content(form_field_id=request.data['form_field_id'])
+                FormRead.FormReadService.read_column_rows(form_field_id=request.data['form_field_id'])
             )
         )

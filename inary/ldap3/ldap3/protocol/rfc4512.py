@@ -810,7 +810,7 @@ class DitStructureRuleInfo(BaseObjectInfo):
 
     def __repr__(self):
         r = (linesep + '  Superior rules: ' + list_to_string(self.superior)) if self.superior else ''
-        r += (linesep + '  Name form: ' + list_to_string(self.name_form)) if self.name_form else ''
+        r += (linesep + '  Name repository: ' + list_to_string(self.name_form)) if self.name_form else ''
         return 'DIT content rule' + BaseObjectInfo.__repr__(self).replace('<__desc__>', r)
 
 

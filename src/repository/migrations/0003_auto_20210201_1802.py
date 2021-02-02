@@ -8,12 +8,12 @@ class Migration(migrations.Migration):
 
     dependencies = [
         ('group', '0001_initial'),
-        ('form', '0002_auto_20210201_1800'),
+        ('repository', '0002_auto_20210201_1800'),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='form',
+            model_name='repository',
             name='group_fk',
             field=models.ForeignKey(on_delete=django.db.models.deletion.DO_NOTHING, to='group.group'),
         ),
