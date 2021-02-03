@@ -21,9 +21,11 @@ class UserReadService:
     def read_user_by_email(email):
         try:
             user_query = User.objects.get(email=email)
-
-            return UserReadService.__map_user(user_query)
+            if user_query is not None:
+                return UserReadService.__map_user(user_query)
         except exceptions.ObjectDoesNotExist:
+            return None
+        except exceptions.FieldError:
             return None
 
     @staticmethod

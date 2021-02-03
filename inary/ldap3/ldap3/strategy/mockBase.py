@@ -493,7 +493,7 @@ class MockBaseStrategy(object):
         # request: entry, changes
         # response: LDAPResult
         #
-        # changes is a dictionary in the file_management {'attribute': [(operation, [val1, ...]), ...], ...}
+        # changes is a dictionary in the form {'attribute': [(operation, [val1, ...]), ...], ...}
         # operation is 0 (add), 1 (delete), 2 (replace), 3 (increment)
         request = modify_request_to_dict(request_message)
         dn = safe_dn(request['entry'])

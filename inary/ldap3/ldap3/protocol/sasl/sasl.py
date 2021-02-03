@@ -60,7 +60,7 @@ def sasl_prep(data):
             prepared_data += c
 
     # normalizing
-    # This profile specifies using Unicode normalization file_management KC
+    # This profile specifies using Unicode normalization form KC
     # The repertoire is Unicode 3.2 as per RFC 4013 (2)
 
     prepared_data = unicode32.normalize('NFKC', prepared_data)

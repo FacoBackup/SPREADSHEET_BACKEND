@@ -76,7 +76,7 @@ standard_formatter = {
     '1.3.6.1.4.1.1466.115.121.1.32': (format_unicode, None),  # Mail Preference [OBSOLETE]
     '1.3.6.1.4.1.1466.115.121.1.33': (format_unicode, None),  # MHS OR Address [OBSOLETE]
     '1.3.6.1.4.1.1466.115.121.1.34': (format_unicode, None),  # Name and optional UID
-    '1.3.6.1.4.1.1466.115.121.1.35': (format_unicode, None),  # Name file_management description
+    '1.3.6.1.4.1.1466.115.121.1.35': (format_unicode, None),  # Name form description
     '1.3.6.1.4.1.1466.115.121.1.36': (format_unicode, None),  # Numeric string
     '1.3.6.1.4.1.1466.115.121.1.37': (format_unicode, None),  # Object class description
     '1.3.6.1.4.1.1466.115.121.1.38': (format_unicode, None),  # OID

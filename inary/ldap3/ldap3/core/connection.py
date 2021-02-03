@@ -943,7 +943,7 @@ class Connection(object):
         Add dn to the DIT, object_class is None, a class name or a list
         of class names.
 
-        Attributes is a dictionary in the file_management 'attr': 'val' or 'attr':
+        Attributes is a dictionary in the form 'attr': 'val' or 'attr':
         ['val1', 'val2', ...] for multivalued attributes
         """
         conf_attributes_excluded_from_check = [v.lower() for v in get_config_parameter('ATTRIBUTES_EXCLUDED_FROM_CHECK')]
@@ -1080,7 +1080,7 @@ class Connection(object):
         """
         Modify attributes of entry
 
-        - changes is a dictionary in the file_management {'attribute1': change), 'attribute2': [change, change, ...], ...}
+        - changes is a dictionary in the form {'attribute1': change), 'attribute2': [change, change, ...], ...}
         - change is (operation, [value1, value2, ...])
         - operation is 0 (MODIFY_ADD), 1 (MODIFY_DELETE), 2 (MODIFY_REPLACE), 3 (MODIFY_INCREMENT)
         """

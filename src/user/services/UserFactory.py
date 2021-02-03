@@ -25,8 +25,11 @@ def create_user(
                             study=study,
                             nationality=nationality)
         created_user.save()
-
-        group = GroupReader.GroupReadService.search_group(search_input=department)
+        group = ""
+        if department is None:
+            group = None
+        else:
+            group = GroupReader.GroupReadService.search_group(search_input=department)
         if group is not None:
             membership = GroupManagement.add_member(created_user.id, group_id=group.id)
             membership.save()
