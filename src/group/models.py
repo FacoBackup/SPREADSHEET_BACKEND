@@ -7,6 +7,7 @@ class Group(models.Model):
     name = models.TextField(unique=True)
     pic = models.TextField(null=True, blank=True)
     about = models.TextField(null=True, blank=True)
+    tag = models.TextField(unique=True)
 
     def __int__(self):
         return self.id

@@ -7,7 +7,8 @@ class GroupReadService:
     @staticmethod
     def search_group(search_input):
         try:
-            group_query = Group.objects.filter(name=search_input)
+            tag = (search_input.lower()).replace(" ", "")
+            group_query = Group.objects.filter(tag=tag)
 
             response = []
             for i in group_query:

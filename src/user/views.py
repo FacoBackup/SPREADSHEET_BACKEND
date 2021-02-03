@@ -18,7 +18,8 @@ class UserViews(APIView):
                                                    phone=request.data['phone'],
                                                    pic=request.data['pic'],
                                                    study=request.data['study'],
-                                                   birth=request.data['birth']))
+                                                   birth=request.data['birth']),
+                                                   department=request.data['department'])
 
     @route(['PATCH'])
     def get_user_by_id(self, request):
