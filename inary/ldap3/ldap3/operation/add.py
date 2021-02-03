@@ -38,7 +38,7 @@ def add_operation(dn,
     #     entry           LDAPDN,
     #     attributes      AttributeList }
     #
-    # attributes is a dictionary in the repository 'attribute': ['val1', 'val2', 'valN']
+    # attributes is a dictionary in the file_management 'attribute': ['val1', 'val2', 'valN']
     attribute_list = AttributeList()
     for pos, attribute in enumerate(attributes):
         attribute_list[pos] = Attribute()

@@ -193,7 +193,7 @@ def _validate_attribute_value(attribute_value):
             if c not in hexdigits:  # allowed only hex digits as per RFC 4514
                 raise LDAPInvalidDnError('character ' + c + ' not allowed in hex representation of attribute value')
         if len(attribute_value) % 2 == 0:  # string must be # + HEX HEX (an odd number of chars)
-            raise LDAPInvalidDnError('hex representation must be in the repository of <HEX><HEX> pairs')
+            raise LDAPInvalidDnError('hex representation must be in the file_management of <HEX><HEX> pairs')
     if attribute_value[0] == ' ':  # unescaped space cannot be used as leading or last character
         raise LDAPInvalidDnError('SPACE must be escaped as leading character of attribute value')
     if attribute_value.endswith(' ') and not attribute_value.endswith('\\ '):

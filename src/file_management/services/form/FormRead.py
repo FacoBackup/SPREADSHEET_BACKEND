@@ -1,4 +1,4 @@
-from src.repository.models import Repository, Column, Row
+from src.file_management.models import Repository, Column, Row
 from django.core import exceptions, serializers
 from rest_framework import status
 

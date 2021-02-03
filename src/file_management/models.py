@@ -28,7 +28,7 @@ class Commit(models.Model):
     id = models.BigAutoField(primary_key=True)
     changes = models.BigIntegerField()
     branch_fk = models.ForeignKey(Branch, on_delete=models.CASCADE)
-    commit_time = models.BigAutoField()
+    commit_time = models.BigIntegerField()
     message = models.TextField()
 
     def __int__(self):

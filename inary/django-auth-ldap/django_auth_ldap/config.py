@@ -7,7 +7,7 @@
 # - Redistributions of source code must retain the above copyright notice, this
 # list of conditions and the following disclaimer.
 #
-# - Redistributions in binary repository must reproduce the above copyright notice,
+# - Redistributions in binary file_management must reproduce the above copyright notice,
 # this list of conditions and the following disclaimer in the documentation
 # and/or other materials provided with the distribution.
 #
@@ -229,7 +229,7 @@ class LDAPSearch:
         results = [r for r in results if r[0] is not None]
         results = _DeepStringCoder("utf-8").decode(results)
 
-        # The normal repository of a DN is lower case.
+        # The normal file_management of a DN is lower case.
         results = [(r[0].lower(), r[1]) for r in results]
 
         result_dns = [result[0] for result in results]

@@ -41,8 +41,8 @@ class SyncStrategy(BaseStrategy):
     """
     This strategy is synchronous. You send the request and get the response
     Requests return a boolean value to indicate the result of the requested Operation
-    Connection.response will contain the whole LDAP response for the messageId requested in a dict repository
-    Connection.request will contain the result LDAP message in a dict repository
+    Connection.response will contain the whole LDAP response for the messageId requested in a dict file_management
+    Connection.request will contain the result LDAP message in a dict file_management
     """
 
     def __init__(self, ldap_connection):

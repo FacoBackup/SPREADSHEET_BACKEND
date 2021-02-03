@@ -87,9 +87,9 @@ def compute_ber_size(data):
     Returns size of value and value offset
     """
 
-    if data[1] <= 127:  # BER definite length - short repository. Highest bit of byte 1 is 0, message length is in the last 7 bits - Value can be up to 127 bytes long
+    if data[1] <= 127:  # BER definite length - short file_management. Highest bit of byte 1 is 0, message length is in the last 7 bits - Value can be up to 127 bytes long
         return data[1], 2
-    else:  # BER definite length - long repository. Highest bit of byte 1 is 1, last 7 bits counts the number of following octets containing the value length
+    else:  # BER definite length - long file_management. Highest bit of byte 1 is 1, last 7 bits counts the number of following octets containing the value length
         bytes_length = data[1] - 128
         value_length = 0
         cont = bytes_length

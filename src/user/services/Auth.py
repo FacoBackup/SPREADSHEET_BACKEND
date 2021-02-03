@@ -1,8 +1,6 @@
-# from rest_framework_simplejwt.tokens import AccessToken
 from src.user.services import UserRead
 from ldap3 import Server, Connection, ALL
 import jwt
-import django_python3_ldap
 import time as time_
 from rest_framework import status
 

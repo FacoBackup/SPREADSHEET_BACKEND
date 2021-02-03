@@ -1,9 +1,9 @@
 from rest_framework import status
 from django.core import exceptions
-from src.repository.models import Repository, Branch, Commit, Column, Row
+from src.file_management.models import Repository, Branch, Commit, Column, Row
 from src.user.models import User
 from src.group.models import Group
-from src.repository.services.form import FormFactory, FormRead
+from src.file_management.services.form import FormFactory, FormRead
 import time
 
 
@@ -85,11 +85,24 @@ class RepositoryFactory:
         try:
             branch = Branch.objects.get(id=data['branch_id'], user_fk=requester)
             if branch is not None:
+                changes = 0
+                for i in data['data']:
+                    if data[i]['row_id'] is not None and \
+                            (data[i]['new_content'] != "" and data[i]['new_content'] is not None):
+                        changes += 1
+                        row = Row.objects.get(id=data[i]['row_id'])
+                        row.content = data[i]['new_content']
+                        row.save()
+                    elif data[i]['row_id'] is None and \
+                            (data[i]['new_content'] != "" and data[i]['new_content'] is not None):
+                        changes += 1
+                        row = Row(column_fk=data[i]['column_id'], content=data[i]['new_content'])
+                        row.save()
 
-                RepositoryFactory.__create_commit(changes=len(data['data']),
+                RepositoryFactory.__create_commit(changes=changes,
                                                   branch_id=data['branch_id'],
                                                   message=data['commit_message'])
-            # TODO: Needs the rest of the code for saving changes
+
         except exceptions.FieldError:
             return status.HTTP_500_INTERNAL_SERVER_ERROR
         except exceptions.PermissionDenied:

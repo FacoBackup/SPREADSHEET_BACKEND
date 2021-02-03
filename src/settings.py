@@ -29,7 +29,7 @@ ALLOWED_HOSTS = []
 
 INSTALLED_APPS = [
     'src.user',
-    'src.repository',
+    'src.file_management',
     'src.group',
     'django.contrib.admin',
     'django.contrib.auth',

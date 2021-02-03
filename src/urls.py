@@ -17,7 +17,7 @@ from django.contrib import admin
 from django.urls import path
 from src.user import views as user_views
 from src.group import views as group_views
-from src.repository import views as form_views
+from src.file_management.views import FormViews, RepositoryViews
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -36,12 +36,19 @@ urlpatterns = [
     path('api/get/groups/by_max_id', group_views.GroupViews.get_groups_by_user_max_id, name="get_groups_by_max_id"),
     # GROUP
 
+    # REPOSITORY
+    path('api/file_management', RepositoryViews.create_repository, name="create_repository"),
+    path('api/branch', RepositoryViews.create_branch, name="create_branch"),
+    path('api/file_management/branches', RepositoryViews.read_repository_branches, name="read_repository_branches"),
+    path('api/group/repositories', RepositoryViews.read_group_repositories, name="read_group_repositories"),
+    path('api/get/branch/commits', RepositoryViews.read_branch_commits, name="read_branch_commits"),
+    # REPOSITORY
+
     # FORM
-    path('api/repository', form_views.create_form, name="create_form"),
-    path('api/repository/field', form_views.create_form_field, name="create_form_field"),
-    path('api/repository/content', form_views.create_field_content, name="create_form_content"),
-    path('api/get/repository/field', form_views.read_form_fields, name="get_form_fields"),
-    path('api/get/repository/content', form_views.read_form_content, name="get_form_content"),
-    path('api/get/field/content', form_views.read_field_content, name="get_form_field_content"),
+    path('api/branch/column', FormViews.create_column, name="create_column"),
+    path('api/branch/cell', FormViews.create_cell, name="create_cell"),
+    path('api/get/branch/columns', FormViews.read_all_columns, name="get_all_columns"),
+    path('api/get/branch/content', FormViews.read_all_content_by_branch, name="get_all_content"),
+    path('api/get/cells/column', FormViews.read_all_cells_by_column, name="get_cells_by_column"),
     # FORM
 ]
