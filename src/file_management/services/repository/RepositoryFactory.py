@@ -79,6 +79,10 @@ class RepositoryFactory:
     #         }
     #     ]
     # }
+    @staticmethod
+    def merge(current_branch_id, target_branch_id):
+        print("TODO: not yet implemented")
+        # TODO: not yet implemented
 
     @staticmethod
     def save_changes(data, requester):
