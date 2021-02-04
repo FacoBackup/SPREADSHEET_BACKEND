@@ -4,19 +4,31 @@ from django.core import exceptions, serializers
 
 
 class GroupReadService:
+
+    @staticmethod
+    def verify_member(user_id, group_id):
+        try:
+            member = GroupMembership.objects.get(group_fk=group_id, user_fk=user_id)
+
+            if member is not None:
+                return True
+            else:
+                return False
+        except exceptions.ObjectDoesNotExist:
+            return False
+
     @staticmethod
     def search_group(search_input):
         try:
             tag = (search_input.lower()).replace(" ", "")
             group_query = Group.objects.filter(tag=tag)
-
             response = []
             for i in group_query:
-                response.__iadd__(GroupReadService.__map_group(group_query[i]))
+                response.append(GroupReadService.__map_group(i))
 
             return response
         except exceptions.ObjectDoesNotExist:
-            return status.HTTP_500_INTERNAL_SERVER_ERROR
+            return None
 
     @staticmethod
     def read_group(group_id):
@@ -30,15 +42,19 @@ class GroupReadService:
     @staticmethod
     def read_groups_user(user_id):
         try:
-            group_query = (
+            memberships = (
                 GroupMembership.objects.filter(user_fk=user_id).select_related()[:10]
             )
 
-            response = []
-            for i in group_query:
-                response.__iadd__(GroupReadService.__map_group(group_query[i]))
+            groups = []
 
-            return response
+            for i in memberships:
+                membership = GroupReadService.__map_membership(i)
+                group = Group.objects.get(id=membership['group_id'])
+                if group is not None:
+                    groups.append(GroupReadService.__map_group(group))
+
+            return groups
         except exceptions.ObjectDoesNotExist:
             return status.HTTP_500_INTERNAL_SERVER_ERROR
 
@@ -51,12 +67,20 @@ class GroupReadService:
 
             response = []
             for i in group_query:
-                response.__iadd__(GroupReadService.__map_group(group_query[i]))
+                response.append(GroupReadService.__map_membership(i))
 
             return response
 
         except exceptions.ObjectDoesNotExist:
             return status.HTTP_500_INTERNAL_SERVER_ERROR
+
+    @staticmethod
+    def __map_membership(membership):
+        return {
+            "user_id": membership.user_fk.id,
+            "group_id": membership.group_fk.id,
+            "role": membership.role
+        }
 
     @staticmethod
     def __map_group(group):

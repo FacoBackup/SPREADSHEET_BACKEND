@@ -10,7 +10,7 @@ class FormReadService:
             content = Row.objects.filter(field_fk=column_id)
             response = []
             for i in content:
-                response.__iadd__(FormReadService.__map_row(content[i]))
+                response.append(FormReadService.__map_row(i))
 
             return response
         except exceptions.ObjectDoesNotExist:
@@ -22,7 +22,7 @@ class FormReadService:
             columns = Column.objects.filter(branch_fk=branch_id)
             response = []
             for i in columns:
-                response.__iadd__(FormReadService.__map_column(columns[i]))
+                response.append(FormReadService.__map_column(i))
 
             return response
         except exceptions.ObjectDoesNotExist:
@@ -35,12 +35,12 @@ class FormReadService:
             columns = Column.objects.filter(branch_fk=branch_id)
 
             for i in columns:
-                content = Row.objects.filter(column_fk=columns[i].id)
+                content = Row.objects.filter(column_fk=i.id)
                 mapped_content = []
                 for j in content:
-                    mapped_content.__iadd__(FormReadService.__map_row(content[j]))
+                    mapped_content.append(FormReadService.__map_row(j))
 
-                response.__iadd__(mapped_content)
+                response.append(mapped_content)
 
             return response
         except exceptions.ObjectDoesNotExist:
@@ -53,15 +53,15 @@ class FormReadService:
             columns = Column.objects.filter(branch_fk=branch_id)
 
             for i in columns:
-                content = Row.objects.filter(column_fk=columns[i].id)
+                content = Row.objects.filter(column_fk=i.id)
                 mapped_content = []
                 for j in content:
-                    mapped_content.__iadd__(
-                        str(FormReadService.__map_row_csv(content[j].content, column_name=columns[i].name)) +
-                        FormReadService.__add_comma(position=j, size=len(content) - 1)
+                    mapped_content.append(
+                        str(FormReadService.__map_row_csv(j.content, column_name=i.name)) +
+                        FormReadService.__add_comma(position=content.index(j), size=len(content) - 1)
                     )
                 e = 0
-                response.__iadd__(
+                response.append(
                     "{" +
                     ", ".join(mapped_content)
                     +
@@ -79,15 +79,15 @@ class FormReadService:
             columns = Column.objects.filter(branch_fk=branch_id)
 
             for i in columns:
-                content = Row.objects.filter(column_fk=columns[i].id)
+                content = Row.objects.filter(column_fk=i.id)
                 mapped_content = []
                 for j in content:
-                    mapped_content.__iadd__(FormReadService.__map_row(content[j]))
+                    mapped_content.append(FormReadService.__map_row(j))
 
-                response.__iadd__({
+                response.append({
                     "column": {
-                        "name": columns[i].name,
-                        "id": columns[i].id
+                        "name": i.name,
+                        "id": i.id
                     },
                     "content": mapped_content
                 })
@@ -118,7 +118,7 @@ class FormReadService:
     def __map_column(field):
         return {
             "id": field.id,
-            "branch_id": field.branch_fk,
+            "branch_id": field.branch_fk.id,
             "name": field.name
         }
 
@@ -127,5 +127,5 @@ class FormReadService:
         return {
             "content": content.content,
             "id": content.id,
-            "column_id": content.column_fk
+            "column_id": content.column_fk.id
         }

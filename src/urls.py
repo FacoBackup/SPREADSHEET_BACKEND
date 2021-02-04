@@ -39,6 +39,7 @@ urlpatterns = [
     # REPOSITORY
     path('api/file_management', file_management_views.create_repository, name="create_repository"),
     path('api/branch', file_management_views.create_branch, name="create_branch"),
+    path('api/merge', file_management_views.merge_branches, name="merge_branches"),
     path('api/file_management/branches', file_management_views.read_repository_branches, name="read_repository_branches"),
     path('api/group/repositories', file_management_views.read_group_repositories, name="read_group_repositories"),
     path('api/get/branch/commits', file_management_views.read_branch_commits, name="read_branch_commits"),

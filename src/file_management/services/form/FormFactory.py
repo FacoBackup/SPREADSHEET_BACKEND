@@ -9,14 +9,14 @@ class FormFactory:
         try:
             form_field = Column(name=name, branch_fk=Branch.objects.only("id").get(id=branch_id))
             form_field.save()
-            return status.HTTP_201_CREATED
+            return form_field.id
         except exceptions.FieldError:
-            return status.HTTP_500_INTERNAL_SERVER_ERROR
+            return None
         except exceptions.PermissionDenied:
-            return status.HTTP_500_INTERNAL_SERVER_ERROR
+            return None
 
     @staticmethod
-    def create_row(content, column_id, requester):
+    def create_cell(content, column_id, requester):
         try:
             form_content = Row(content=content,
                                creator=requester,

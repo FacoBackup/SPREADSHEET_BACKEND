@@ -4,6 +4,7 @@ from src.file_management.models import Repository, Branch, Commit, Column, Row
 from src.user.models import User
 from src.group.models import Group
 from src.file_management.services.form import FormFactory, FormRead
+from src.group.services import GroupManagement, GroupReader
 import time
 
 
@@ -34,17 +35,18 @@ class RepositoryFactory:
             new_branch.save()
 
             for i in columns:
-                new_column = Column(name=columns[i]['name'], branch_fk=new_branch.id)
+                new_column = Column(name=i['name'], branch_fk=new_branch.id)
                 new_column.save()
-                new_column_relations.__iadd__({
-                    "origin_column": columns[i]["id"],
+                new_column_relations.append({
+                    "origin_column": i["id"],
                     "new_column": new_column.id
                 })
 
             for j in rows:
-                new_column_id = RepositoryFactory.__filter_new_column_id(old_id=rows[j]['column_id'],column_relations=new_column_relations)
+                new_column_id = RepositoryFactory.__filter_new_column_id(old_id=j['column_id'],
+                                                                         column_relations=new_column_relations)
                 if new_column_id is not None:
-                    new_row = Row(content=rows[j]['content'], column_fk=new_column_id)
+                    new_row = Row(content=j['content'], column_fk=new_column_id)
                     new_row.save()
 
             return status.HTTP_201_CREATED
@@ -80,9 +82,41 @@ class RepositoryFactory:
     #     ]
     # }
     @staticmethod
-    def merge(current_branch_id, target_branch_id):
-        print("TODO: not yet implemented")
-        # TODO: not yet implemented
+    def merge(source_branch_id, target_branch_id, requester):
+        try:
+            target_branch = Branch.objects.get(id=target_branch_id)
+            source_branch = Branch.objects.get(id=source_branch_id)
+
+            if (target_branch is not None) and\
+                    (source_branch is not None) and \
+                    (target_branch.repository_fk == source_branch.repository_fk):
+                repository = Repository.objects.get(id=target_branch.repository_fk)
+                member = None
+                if repository is not None:
+                    member = GroupReader.GroupReadService.verify_member(user_id=requester, group_id=repository.group_fk)
+
+                if member is not None:
+                    columns = FormRead.FormReadService.read_columns(branch_id=source_branch_id)
+
+                    for i in columns:
+                        rows = FormRead.FormReadService.read_column_rows(column_id=i['id'])
+                        column_id = FormFactory.FormFactory.create_column(name=i['name'], branch_id=target_branch_id)
+
+                        if column_id is not None:
+                            for j in rows:
+                                FormFactory.FormFactory.create_cell(column_id=column_id, content=j['content'], requester=requester)
+
+                    return status.HTTP_200_OK
+                else:
+                    return status.HTTP_424_FAILED_DEPENDENCY
+            else:
+                return status.HTTP_417_EXPECTATION_FAILED
+        except exceptions.FieldError:
+            return status.HTTP_500_INTERNAL_SERVER_ERROR
+        except exceptions.PermissionDenied:
+            return status.HTTP_500_INTERNAL_SERVER_ERROR
+        except exceptions.ObjectDoesNotExist:
+            return status.HTTP_500_INTERNAL_SERVER_ERROR
 
     @staticmethod
     def save_changes(data, requester):
@@ -91,16 +125,16 @@ class RepositoryFactory:
             if branch is not None:
                 changes = 0
                 for i in data['data']:
-                    if data[i]['row_id'] is not None and \
-                            (data[i]['new_content'] != "" and data[i]['new_content'] is not None):
+                    if i['row_id'] is not None and \
+                            (i['new_content'] != "" and i['new_content'] is not None):
                         changes += 1
-                        row = Row.objects.get(id=data[i]['row_id'])
-                        row.content = data[i]['new_content']
+                        row = Row.objects.get(id=i['row_id'])
+                        row.content = i['new_content']
                         row.save()
-                    elif data[i]['row_id'] is None and \
-                            (data[i]['new_content'] != "" and data[i]['new_content'] is not None):
+                    elif i['row_id'] is None and \
+                            (i['new_content'] != "" and i['new_content'] is not None):
                         changes += 1
-                        row = Row(column_fk=data[i]['column_id'], content=data[i]['new_content'])
+                        row = Row(column_fk=i['column_id'], content=i['new_content'])
                         row.save()
 
                 RepositoryFactory.__create_commit(changes=changes,
@@ -129,8 +163,8 @@ class RepositoryFactory:
     @staticmethod
     def __filter_new_column_id(old_id, column_relations):
         for i in column_relations:
-            if column_relations[i]['origin_column'] == old_id:
-                return column_relations[i]['new_column']
+            if i['origin_column'] == old_id:
+                return i['new_column']
 
         return None
 

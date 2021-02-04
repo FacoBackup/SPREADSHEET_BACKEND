@@ -12,7 +12,7 @@ class UserReadService:
             user_query = User.objects.filter(Q(name=search_input) | Q(email=search_input))
             response = []
             for i in user_query:
-                response.__iadd__(UserReadService.__map_user(user_query[i]))
+                response.append(UserReadService.__map_user(i))
             return response
         except exceptions.ObjectDoesNotExist:
             return status.HTTP_500_INTERNAL_SERVER_ERROR
@@ -43,7 +43,7 @@ class UserReadService:
             user_query = User.objects.all()
             response = []
             for i in user_query:
-                response.__iadd__(UserReadService.__map_user(user_query[i]))
+                response.append(UserReadService.__map_user(i))
             return response
 
         except exceptions.ObjectDoesNotExist:
@@ -55,7 +55,7 @@ class UserReadService:
             user_query = User.objects.filter(id__lt=max_id)
             response = []
             for i in user_query:
-                response.__iadd__(UserReadService.__map_user(user_query[i]))
+                response.append(UserReadService.__map_user(i))
             return response
         except exceptions.ObjectDoesNotExist:
             return status.HTTP_500_INTERNAL_SERVER_ERROR
@@ -66,7 +66,7 @@ class UserReadService:
             user_query = User.objects.order_by('-id').all()[:10]
             response = []
             for i in user_query:
-                response.__iadd__(UserReadService.__map_user(user_query[i]))
+                response.append(UserReadService.__map_user(i))
             return response
 
         except exceptions.ObjectDoesNotExist:

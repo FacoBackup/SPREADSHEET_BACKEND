@@ -6,7 +6,8 @@ from src.user.models import User
 
 def create_group(name, about, pic, requester):
     try:
-        group_id = Group(name=name, about=about, pic=pic)
+        name = (name.lower()).replace(" ", "")
+        group_id = Group(name=name, about=about, pic=pic, tag=name)
         group_id.save()
         group_membership = GroupMembership(user_fk=User.objects.only('id').get(id=requester), group_fk=group_id, role="MEMBER")
         group_membership.save()

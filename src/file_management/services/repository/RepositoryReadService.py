@@ -10,7 +10,7 @@ class RepositoryReadService:
             repositories = Repository.objects.filter(group_fk=group_id)
             response = []
             for i in repositories:
-                response.__iadd__(RepositoryReadService.__map_repository(repositories[i]))
+                response.append(RepositoryReadService.__map_repository(i))
 
             return response
         except exceptions.ObjectDoesNotExist:
@@ -22,7 +22,7 @@ class RepositoryReadService:
             branches = Branch.objects.filter(repository_fk=repository_id)
             response = []
             for i in branches:
-                response.__iadd__(RepositoryReadService.__map_repository(branches[i]))
+                response.append(RepositoryReadService.__map_repository(i))
 
             return response
         except exceptions.ObjectDoesNotExist:
@@ -34,7 +34,7 @@ class RepositoryReadService:
             commits = Commit.objects.filter(branch_fk=branch_id)
             response = []
             for i in commits:
-                response.__iadd__(RepositoryReadService.__map_commit(commits[i]))
+                response.append(RepositoryReadService.__map_commit(i))
 
             return response
         except exceptions.ObjectDoesNotExist:
