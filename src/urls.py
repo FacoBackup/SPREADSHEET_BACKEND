@@ -22,6 +22,7 @@ from src.file_management import views as file_management_views
 urlpatterns = [
     path('admin/', admin.site.urls),
     # USER
+    path('api/search/user', user_views.search_user, name="search_user"),
     path('api/user', user_views.create_user, name="create_user"),
     path('api/get/user/by_id', user_views.get_user_by_id, name="get_user_by_id"),
     path('api/get/users', user_views.get_users, name="get_users"),

@@ -16,10 +16,10 @@ def create_user(
         department
 ):
     try:
-        if (User.objects.filter(email=email).exists() == False) and \
-                (User.objects.filter(phone=phone).exists() == False):
-            created_user = User(name=name,
-                                email=email,
+        if (User.objects.filter(email=email).exists() is False) and \
+                (User.objects.filter(phone=phone).exists() is False):
+            created_user = User(name=name.lower(),
+                                email=email.lower(),
                                 phone=phone,
                                 birth=birth,
                                 pic=pic,
