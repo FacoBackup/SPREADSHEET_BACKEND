@@ -23,11 +23,11 @@ def create_user(request):
 
 @route(['PATCH'])
 def get_user_by_id(request):
-    token = request.META.get('HTTP_X_TOKEN')
+    token = request.META.get('HTTP_AUTHORIZATION')
     if token is not None:
         decoded_token = jwt.decode(token, key="askdasdiuh123i1y98yejas9d812hiu89dqw9", algorithms="HS256")
         if decoded_token['exp'] > time.time():
-            data = UserRead.UserReadService.read_user_by_id(decoded_token["user_id"])
+            data = UserRead.UserReadService.read_user_by_id(request.data['user_id'])
             if data is not None:
                 return callRespond(data)
             else:
@@ -36,12 +36,13 @@ def get_user_by_id(request):
             return HttpResponse(status=status.HTTP_401_UNAUTHORIZED)
 
     else:
+        print("token not valid")
         return HttpResponse(status=status.HTTP_401_UNAUTHORIZED)
 
 
 @route(['PATCH'])
 def get_user_by_max_id(request):
-    token = request.META.get('HTTP_X_TOKEN')
+    token = request.META.get('HTTP_AUTHORIZATION')
     if token is not None:
         decoded_token = jwt.decode(token, key="askdasdiuh123i1y98yejas9d812hiu89dqw9", algorithms="HS256")
         if decoded_token['exp'] > time.time():
@@ -64,4 +65,8 @@ def get_users(request):
 
 @route(['POST'])
 def sign_in(request):
-    return HttpResponse(status=Auth.sign_in(user_email=request.data['email'], password=request.data['password']))
+    response = Auth.sign_in(user_email=request.data['email'], password=request.data['password'])
+    if response == 401:
+        return HttpResponse(status=401)
+    else:
+        return callRespond(response)

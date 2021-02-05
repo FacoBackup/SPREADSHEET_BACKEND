@@ -12,6 +12,7 @@ class User(models.Model):
     nationality = models.TextField()
     study = models.CharField(max_length=512)
     about = models.TextField(null=True, blank=True)
+    background = models.TextField(null=True, blank=True)
 
     def __int__(self):
         return self.id

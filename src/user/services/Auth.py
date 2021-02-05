@@ -23,4 +23,4 @@ def sign_in(user_email, password):
         #     return status.HTTP_401_UNAUTHORIZED
 
     else:
-        return status.HTTP_404_NOT_FOUND
+        return status.HTTP_401_UNAUTHORIZED

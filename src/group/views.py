@@ -9,7 +9,7 @@ from rest_framework import status
 
 @route(['POST'])
 def create_group(request):
-    token = request.META.get('HTTP_X_TOKEN')
+    token = request.META.get('HTTP_AUTHORIZATION')
     if token is not None:
         decoded_token = jwt.decode(token, key="askdasdiuh123i1y98yejas9d812hiu89dqw9", algorithms="HS256")
 
@@ -25,7 +25,7 @@ def create_group(request):
 
 @route(['PATCH'])
 def get_group(request):
-    token = request.META.get('HTTP_X_TOKEN')
+    token = request.META.get('HTTP_AUTHORIZATION')
     if token is not None:
         decoded_token = jwt.decode(token, key="askdasdiuh123i1y98yejas9d812hiu89dqw9", algorithms="HS256")
         if decoded_token['exp'] > time.time():
@@ -41,7 +41,7 @@ def get_group(request):
 
 @route(['PATCH'])
 def get_groups_by_user(request):
-    token = request.META.get('HTTP_X_TOKEN')
+    token = request.META.get('HTTP_AUTHORIZATION')
     if token is not None:
         decoded_token = jwt.decode(token, key="askdasdiuh123i1y98yejas9d812hiu89dqw9", algorithms="HS256")
         if decoded_token['exp'] > time.time():
@@ -57,7 +57,7 @@ def get_groups_by_user(request):
 
 @route(['PATCH'])
 def get_groups_by_user_max_id(request):
-    token = request.META.get('HTTP_X_TOKEN')
+    token = request.META.get('HTTP_AUTHORIZATION')
     if token is not None:
         decoded_token = jwt.decode(token, key="askdasdiuh123i1y98yejas9d812hiu89dqw9", algorithms="HS256")
         if decoded_token['exp'] > time.time():
