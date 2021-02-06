@@ -39,9 +39,12 @@ def get_user_by_max_id(request):
     return callRespond(data)
 
 
-@route(['GET'])
+@route(['PATCH'])
 def get_users(request):
-    return callRespond(UserRead.UserReadService.read_users())
+    if request.data['max_id'] is None:
+        return callRespond(UserRead.UserReadService.read_users())
+    else:
+        return callRespond(UserRead.UserReadService.read_user_by_max_id(request.data['max_id']))
 
 
 @route(['POST'])
