@@ -18,10 +18,21 @@ class GroupReadService:
             return False
 
     @staticmethod
+    def read_first_group(user_id):
+        try:
+            member = GroupMembership.objects.filter(user_fk=user_id)[:1]
+            if len(member) > 0:
+                return GroupReadService.__map_membership(member[0])
+            else:
+                return None
+        except exceptions.ObjectDoesNotExist:
+            return None
+
+    @staticmethod
     def search_group(search_input):
         try:
             tag = (search_input.lower()).replace(" ", "")
-            group_query = Group.objects.filter(tag=tag)
+            group_query = Group.objects.filter(tag__contains=tag)
             response = []
             for i in group_query:
                 response.append(GroupReadService.__map_group(i))
