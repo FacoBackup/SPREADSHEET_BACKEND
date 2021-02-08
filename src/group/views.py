@@ -18,18 +18,9 @@ def create_group(request):
 
 @route(['PATCH'])
 def get_group(request):
-    token = request.META.get('HTTP_AUTHORIZATION')
-    if token is not None:
-        decoded_token = jwt.decode(token, key="askdasdiuh123i1y98yejas9d812hiu89dqw9", algorithms="HS256")
-        if decoded_token['exp'] > time.time():
-            return callRespond(
-                GroupReader.GroupReadService.read_group(request.data['group_id'])
-            )
-        else:
-            return HttpResponse(status=status.HTTP_401_UNAUTHORIZED)
-
-    else:
-        return HttpResponse(status=status.HTTP_401_UNAUTHORIZED)
+    return callRespond(
+        GroupReader.GroupReadService.read_group(request.data['group_id'])
+    )
 
 
 @route(['PATCH'])

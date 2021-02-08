@@ -14,7 +14,9 @@ class RepositoryReadService:
             branches = []
 
             for i in contributor_in:
-                branch = RepositoryReadService.__map_branch(Branch.objects.get(id=i.branch_fk.id))
+                repo = Repository.objects.get(id=i.branch_fk.repository_fk)
+                branch = RepositoryReadService.__map_contributor_branch(Branch.objects.get(id=i.branch_fk.id),repository_name=repo.name)
+
                 if branch is not None:
                     branches.append(branch)
             return branches
@@ -31,7 +33,9 @@ class RepositoryReadService:
             branches = []
 
             for i in contributor_in:
-                branch = RepositoryReadService.__map_branch(Branch.objects.get(id=i.branch_fk.id))
+                repo = Repository.objects.get(id=i.branch_fk.repository_fk)
+                branch = RepositoryReadService.\
+                    __map_contributor_branch(Branch.objects.get(id=i.branch_fk.id), repository_name=repo.name)
                 if branch is not None:
                     branches.append(branch)
             return branches
@@ -85,6 +89,17 @@ class RepositoryReadService:
             return response
         except exceptions.ObjectDoesNotExist:
             return status.HTTP_500_INTERNAL_SERVER_ERROR
+
+    @staticmethod
+    def __map_contributor_branch(branch, repository_name):
+        return {
+            "id": branch.id,
+            "name": branch.name,
+            "repository_id": branch.repository_fk.id,
+            "is_master": branch.is_master,
+            'repository_name': repository_name,
+
+        }
 
     @staticmethod
     def __map_branch(branch):
