@@ -9,6 +9,15 @@ import time
 
 
 @route(['PATCH'])
+def read_contributor_branches(request):
+    if request.data['max_id'] is None:
+        return callRespond(RepositoryReader.RepositoryReadService.read_branches_user(user_id=request.data['user_id']))
+    else:
+        return callRespond(RepositoryReader.RepositoryReadService.
+                           read_branches_user_by_max_id(max_id=request.data['max_id'], user_id=request.data['user_id']))
+
+
+@route(['PATCH'])
 def read_latest_commits(request):
     response = RepositoryReader.RepositoryReadService.read_latest_commits(user_id=request.data['user_id'])
     return callRespond(
@@ -75,10 +84,11 @@ def create_repository(request):
         if decoded_token['exp'] > time.time():
             return callRespond(
                 RepositoryFactory.
-                    RepositoryFactory.
-                    create_repository(name=request.data['name'],
-                                      about=request.data['about'],
-                                      group_id=request.data['group_id'], requester=decoded_token['user_id'])
+                RepositoryFactory.
+                create_repository(name=request.data['name'],
+                                  about=request.data['about'],
+                                  group_id=request.data['group_id'],
+                                  requester=decoded_token['user_id'])
             )
         else:
             return HttpResponse(status=status.HTTP_401_UNAUTHORIZED)

@@ -57,6 +57,7 @@ def update_profile(user_id, phone, pic, background, about, study):
             user.about = about
         if study is not None:
             user.study = study
+        user.save()
         return status.HTTP_200_OK
     else:
         return status.HTTP_404_NOT_FOUND

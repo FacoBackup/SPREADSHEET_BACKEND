@@ -106,6 +106,7 @@ class UserReadService:
             'email': user.email,
             'phone': user.phone,
             'pic': user.pic,
+            'background': user.background,
             'study': user.study,
             'group_id': group_id
         }

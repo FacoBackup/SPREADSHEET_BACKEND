@@ -21,11 +21,11 @@ def create_user(request):
 @route(['PUT'])
 def update_profile(request):
     response = UserFactory.update_profile(user_id=request.data['user_id'],
-                                          phone=request.data['user_id'],
-                                          pic=request.data['user_id'],
-                                          background=request.data['user_id'],
-                                          about=request.data['user_id'],
-                                          study=request.data['user_id'])
+                                          phone=request.data['phone'],
+                                          pic=request.data['pic'],
+                                          background=request.data['background'],
+                                          about=request.data['about'],
+                                          study=request.data['study'])
     return HttpResponse(status=response)
 
 

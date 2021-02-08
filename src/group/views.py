@@ -9,18 +9,11 @@ from rest_framework import status
 
 @route(['POST'])
 def create_group(request):
-    token = request.META.get('HTTP_AUTHORIZATION')
-    if token is not None:
-        decoded_token = jwt.decode(token, key="askdasdiuh123i1y98yejas9d812hiu89dqw9", algorithms="HS256")
-
-        return callRespond(
-            GroupFactory.create_group(name=request.data['name'],
-                                      about=request.data['about'],
-                                      requester=decoded_token['user_id'],
-                                      pic=request.data['pic'])
-        )
-    else:
-        return callRespond(status.HTTP_401_UNAUTHORIZED)
+    return HttpResponse(
+        status=GroupFactory.create_group(name=request.data['name'],
+                                         about=request.data['about'],
+                                         pic=request.data['pic'])
+    )
 
 
 @route(['PATCH'])
@@ -40,7 +33,7 @@ def get_group(request):
 
 
 @route(['PATCH'])
-def get_groups_by_user(request):
+def get_user_groups(request):
     token = request.META.get('HTTP_AUTHORIZATION')
     if token is not None:
         decoded_token = jwt.decode(token, key="askdasdiuh123i1y98yejas9d812hiu89dqw9", algorithms="HS256")

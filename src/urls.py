@@ -1,18 +1,3 @@
-"""AEB_REST_API2 URL Configuration
-
-The `urlpatterns` list routes URLs to views. For more information please see:
-    https://docs.djangoproject.com/en/3.1/topics/http/urls/
-Examples:
-Function views
-    1. Add an import:  from my_app import views
-    2. Add a URL to urlpatterns:  path('', views.home, name='home')
-Class-based views
-    1. Add an import:  from other_app.views import Home
-    2. Add a URL to urlpatterns:  path('', Home.as_view(), name='home')
-Including another URLconf
-    1. Import the include() function: from django.urls import include, path
-    2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
-"""
 from django.contrib import admin
 from django.urls import path
 from src.user import views as user_views
@@ -35,15 +20,16 @@ urlpatterns = [
     # GROUP
     path('api/group', group_views.create_group, name="create_group"),
     path('api/get/group', group_views.get_group, name="get_group"),
-    path('api/get/groups', group_views.get_groups_by_user, name="get_groups"),
+    path('api/get/groups', group_views.get_user_groups, name="get_groups"),
     path('api/get/groups/by_max_id', group_views.get_groups_by_user_max_id, name="get_groups_by_max_id"),
     # GROUP
 
     # REPOSITORY
+    path('api/user/branches', file_management_views.read_contributor_branches, name='get_user_branches'),
     path('api/add/contributor', file_management_views.add_contributor, name='add_contributor'),
     path('api/remove/contributor', file_management_views.remove_contributor, name='remove_contributor'),
     path('api/get/latest/commits', file_management_views.read_latest_commits, name="get_latest_commits"),
-    path('api/file_management', file_management_views.create_repository, name="create_repository"),
+    path('api/repository', file_management_views.create_repository, name="create_repository"),
     path('api/branch', file_management_views.create_branch, name="create_branch"),
     path('api/merge', file_management_views.merge_branches, name="merge_branches"),
     path('api/file_management/branches', file_management_views.read_repository_branches, name="read_repository_branches"),

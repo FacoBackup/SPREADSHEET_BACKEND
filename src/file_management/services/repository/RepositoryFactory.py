@@ -12,16 +12,21 @@ class RepositoryFactory:
     @staticmethod
     def create_repository(requester, name, about, group_id):
         try:
-            repository = Repository(group_fk=Group.objects.only("id").get(id=group_id), name=name, about=about)
-            repository.save()
+            group = Group.objects.get(id=group_id)
+            user = User.objects.get(id=requester)
+            if user is not None and group is not None:
+                repository = Repository(group_fk=group, name=name, about=about)
+                repository.save()
 
-            branch = Branch(name="MASTER", is_master=True, repository_fk=repository)
-            branch.save()
+                branch = Branch(name="MASTER", is_master=True, repository_fk=repository)
+                branch.save()
 
-            contributor = Contributor(user_fk=requester, branch_fk=branch)
-            contributor.save()
+                contributor = Contributor(user_fk=user, branch_fk=branch)
+                contributor.save()
 
-            return status.HTTP_201_CREATED
+                return status.HTTP_201_CREATED
+            else:
+                return status.HTTP_424_FAILED_DEPENDENCY
         except exceptions.FieldError:
             return status.HTTP_500_INTERNAL_SERVER_ERROR
         except exceptions.PermissionDenied:
@@ -183,7 +188,7 @@ class RepositoryFactory:
         try:
             commit = Commit(message=message,
                             changes=changes,
-                            branch_fk=Branch.objects.only("id").get(id=branch_id),
+                            branch_fk=Branch.objects.get(id=branch_id),
                             commit_time=time.time(),
                             user_fk=user_id
                             )

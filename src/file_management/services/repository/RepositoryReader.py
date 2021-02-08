@@ -1,9 +1,43 @@
-from src.file_management.models import Branch, Commit, Repository
+from src.file_management.models import Branch, Commit, Repository, Contributor
 from django.core import exceptions, serializers
 from rest_framework import status
 
 
 class RepositoryReadService:
+    @staticmethod
+    def read_branches_user_by_max_id(user_id, max_id):
+        try:
+            contributor_in = (Contributor
+                              .objects
+                              .filter(user_fk=user_id, branch_fk__lt=max_id)
+                              .order_by('-branch_fk')[:10])
+            branches = []
+
+            for i in contributor_in:
+                branch = RepositoryReadService.__map_branch(Branch.objects.get(id=i.branch_fk.id))
+                if branch is not None:
+                    branches.append(branch)
+            return branches
+        except exceptions.ObjectDoesNotExist:
+            return []
+
+    @staticmethod
+    def read_branches_user(user_id):
+        try:
+            contributor_in = (Contributor
+                              .objects
+                              .filter(user_fk=user_id)
+                              .order_by('-branch_fk')[:10])
+            branches = []
+
+            for i in contributor_in:
+                branch = RepositoryReadService.__map_branch(Branch.objects.get(id=i.branch_fk.id))
+                if branch is not None:
+                    branches.append(branch)
+            return branches
+        except exceptions.ObjectDoesNotExist:
+            return []
+
     @staticmethod
     def read_latest_commits(user_id):
         try:
@@ -57,8 +91,7 @@ class RepositoryReadService:
         return {
             "id": branch.id,
             "name": branch.name,
-            "user_id": branch.user_fk,
-            "repository_id": branch.repository_fk,
+            "repository_id": branch.repository_fk.id,
             "is_master": branch.is_master
         }
 
@@ -68,7 +101,7 @@ class RepositoryReadService:
             "id": repository.id,
             "name": repository.name,
             "about": repository.about,
-            "group_id": repository.group_fk
+            "group_id": repository.group_fk.id
         }
 
     @staticmethod
@@ -76,7 +109,7 @@ class RepositoryReadService:
         return {
             "id": commit.id,
             "changes": commit.changes,
-            "branch_id": commit.branch_fk,
+            "branch_id": commit.branch_fk.id,
             "commit_time": commit.commit_time,
             "message": commit.message
         }

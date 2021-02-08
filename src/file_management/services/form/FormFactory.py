@@ -7,7 +7,7 @@ class FormFactory:
     @staticmethod
     def create_column(branch_id, name):
         try:
-            form_field = Column(name=name, branch_fk=Branch.objects.only("id").get(id=branch_id))
+            form_field = Column(name=name, branch_fk=Branch.objects.get(id=branch_id))
             form_field.save()
             return form_field.id
         except exceptions.FieldError:
@@ -20,7 +20,7 @@ class FormFactory:
         try:
             form_content = Cell(content=content,
                                 creator=requester,
-                                column_fk=Column.objects.only("id").get(id=column_id))
+                                column_fk=Column.objects.get(id=column_id))
             form_content.save()
             return status.HTTP_201_CREATED
         except exceptions.FieldError:
