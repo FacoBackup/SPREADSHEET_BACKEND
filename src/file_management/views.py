@@ -8,6 +8,14 @@ from django.http import HttpResponse
 import time
 
 
+@route(['PATCH'])
+def read_latest_commits(request):
+    response = RepositoryReadService.RepositoryReadService.read_latest_commits(user_id=request.data['user_id'])
+    return callRespond(
+        response
+    )
+
+
 @route(['PUT'])
 def merge_branches(request):
     token = request.META.get('HTTP_AUTHORIZATION')
@@ -33,10 +41,10 @@ def create_repository(request):
         if decoded_token['exp'] > time.time():
             return callRespond(
                 RepositoryFactory.
-                RepositoryFactory.
-                create_repository(name=request.data['name'],
-                                  about=request.data['about'],
-                                  group_id=request.data['group_id'], requester=decoded_token['user_id'])
+                    RepositoryFactory.
+                    create_repository(name=request.data['name'],
+                                      about=request.data['about'],
+                                      group_id=request.data['group_id'], requester=decoded_token['user_id'])
             )
         else:
             return HttpResponse(status=status.HTTP_401_UNAUTHORIZED)
@@ -52,10 +60,10 @@ def create_branch(request):
         if decoded_token['exp'] > time.time():
             return callRespond(
                 RepositoryFactory.
-                RepositoryFactory.
-                create_branch(name=request.data['name'],
-                              repository_id=request.data['repository_id'],
-                              requester=decoded_token['user_id'], about=request.data['about'])
+                    RepositoryFactory.
+                    create_branch(name=request.data['name'],
+                                  repository_id=request.data['repository_id'],
+                                  requester=decoded_token['user_id'], about=request.data['about'])
             )
         else:
             return HttpResponse(status=status.HTTP_401_UNAUTHORIZED)
@@ -101,8 +109,8 @@ def read_repository_branches(request):
         if decoded_token['exp'] > time.time():
             return callRespond(
                 RepositoryReadService.
-                RepositoryReadService.
-                read_repository_branches(repository_id=request.data['repository_id'])
+                    RepositoryReadService.
+                    read_repository_branches(repository_id=request.data['repository_id'])
             )
         else:
             return HttpResponse(status=status.HTTP_401_UNAUTHORIZED)
@@ -131,7 +139,8 @@ def create_column(request):
     if token is not None:
         decoded_token = jwt.decode(token, key="askdasdiuh123i1y98yejas9d812hiu89dqw9", algorithms="HS256")
         if decoded_token['exp'] > time.time():
-            response = FormFactory.FormFactory.create_column(name=request.data['name'], branch_id=request.data['branch_id'])
+            response = FormFactory.FormFactory.create_column(name=request.data['name'],
+                                                             branch_id=request.data['branch_id'])
             if response is not None:
                 return callRespond(
                     status.HTTP_201_CREATED

@@ -139,7 +139,9 @@ class RepositoryFactory:
 
                 RepositoryFactory.__create_commit(changes=changes,
                                                   branch_id=data['branch_id'],
-                                                  message=data['commit_message'])
+                                                  message=data['commit_message'],
+                                                  user_id=requester
+                                                  )
 
         except exceptions.FieldError:
             return status.HTTP_500_INTERNAL_SERVER_ERROR
@@ -147,12 +149,14 @@ class RepositoryFactory:
             return status.HTTP_500_INTERNAL_SERVER_ERROR
 
     @staticmethod
-    def __create_commit(changes, branch_id, message):
+    def __create_commit(changes, branch_id, message, user_id):
         try:
             commit = Commit(message=message,
                             changes=changes,
                             branch_fk=Branch.objects.only("id").get(id=branch_id),
-                            commit_time=time.time())
+                            commit_time=time.time(),
+                            user_fk=user_id
+                            )
             commit.save()
             return status.HTTP_201_CREATED
         except exceptions.FieldError:

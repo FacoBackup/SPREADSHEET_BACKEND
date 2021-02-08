@@ -5,6 +5,18 @@ from rest_framework import status
 
 class RepositoryReadService:
     @staticmethod
+    def read_latest_commits(user_id):
+        try:
+            commits = Commit.objects.filter(user_fk=user_id).order_by('-commit_time')[:3]
+            response = []
+            for i in commits:
+                response.append(RepositoryReadService.__map_commit(i))
+
+            return response
+        except exceptions.ObjectDoesNotExist:
+            return []
+
+    @staticmethod
     def read_group_repositories(group_id):
         try:
             repositories = Repository.objects.filter(group_fk=group_id)
