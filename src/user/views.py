@@ -1,11 +1,8 @@
-import jwt
-from rest_framework import status
 from rest_framework.decorators import (api_view as route)
 from rest_framework.response import Response as callRespond
 from django.http import HttpResponse
 from src.user.services import UserRead, UserFactory
 from src.user.services import Auth
-import time
 
 
 @route(['POST'])
@@ -19,6 +16,17 @@ def create_user(request):
                                                        study=request.data['study'],
                                                        birth=request.data['birth'],
                                                        department=request.data['department']))
+
+
+@route(['PUT'])
+def update_profile(request):
+    response = UserFactory.update_profile(user_id=request.data['user_id'],
+                                          phone=request.data['user_id'],
+                                          pic=request.data['user_id'],
+                                          background=request.data['user_id'],
+                                          about=request.data['user_id'],
+                                          study=request.data['user_id'])
+    return HttpResponse(status=response)
 
 
 @route(['PATCH'])
@@ -51,6 +59,6 @@ def get_users(request):
 def sign_in(request):
     response = Auth.sign_in(user_email=request.data['email'], password=request.data['password'])
     if response == 401:
-        return HttpResponse(status=401)
+        return HttpResponse(status=response)
     else:
         return callRespond(response)

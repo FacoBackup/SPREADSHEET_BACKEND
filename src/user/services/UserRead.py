@@ -1,3 +1,5 @@
+from django.db.models import Q
+
 from src.user.models import User
 from django.core import exceptions, serializers
 from rest_framework import status
@@ -10,12 +12,13 @@ class UserReadService:
     def search_user(search_input):
         try:
             print("HERE")
-            user_query = User.objects.filter(name__icontains=search_input)
+            print(search_input)
+            user_query = User.objects.filter(Q(name__contains=search_input) | Q(email__contains=search_input))
             response = []
             for i in user_query:
                 group = GroupReadService.read_first_group(user_id=i.id)
                 if group is not None:
-                    response.append(UserReadService.__map_user(i, group_id=group.group_fk))
+                    response.append(UserReadService.__map_user(i, group_id=group['group_id']))
                 else:
                     response.append(UserReadService.__map_user(i, group_id=None))
             return response
@@ -82,7 +85,11 @@ class UserReadService:
             user_query = User.objects.order_by('-id').all()[:10]
             response = []
             for i in user_query:
-                response.append(UserReadService.__map_user(i, None))
+                group = GroupReadService.read_first_group(user_id=i.id)
+                if group is not None:
+                    response.append(UserReadService.__map_user(i, group_id=group['group_id']))
+                else:
+                    response.append(UserReadService.__map_user(i, group_id=None))
             return response
 
         except exceptions.ObjectDoesNotExist:

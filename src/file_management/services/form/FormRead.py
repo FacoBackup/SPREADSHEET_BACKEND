@@ -1,16 +1,16 @@
-from src.file_management.models import Repository, Column, Row
+from src.file_management.models import Repository, Column, Cell
 from django.core import exceptions, serializers
 from rest_framework import status
 
 
 class FormReadService:
     @staticmethod
-    def read_column_rows(column_id):
+    def read_column_cells(column_id):
         try:
-            content = Row.objects.filter(field_fk=column_id)
+            content = Cell.objects.filter(field_fk=column_id)
             response = []
             for i in content:
-                response.append(FormReadService.__map_row(i))
+                response.append(FormReadService.__map_cell(i))
 
             return response
         except exceptions.ObjectDoesNotExist:
@@ -29,16 +29,16 @@ class FormReadService:
             return status.HTTP_500_INTERNAL_SERVER_ERROR
 
     @staticmethod
-    def read_all_rows_from_branch(branch_id):
+    def read_all_cells_from_branch(branch_id):
         try:
             response = []
             columns = Column.objects.filter(branch_fk=branch_id)
 
             for i in columns:
-                content = Row.objects.filter(column_fk=i.id)
+                content = Cell.objects.filter(column_fk=i.id)
                 mapped_content = []
                 for j in content:
-                    mapped_content.append(FormReadService.__map_row(j))
+                    mapped_content.append(FormReadService.__map_cell(j))
 
                 response.append(mapped_content)
 
@@ -53,11 +53,11 @@ class FormReadService:
             columns = Column.objects.filter(branch_fk=branch_id)
 
             for i in columns:
-                content = Row.objects.filter(column_fk=i.id)
+                content = Cell.objects.filter(column_fk=i.id)
                 mapped_content = []
                 for j in content:
                     mapped_content.append(
-                        str(FormReadService.__map_row_csv(j.content, column_name=i.name)) +
+                        str(FormReadService.__map_cell_csv(j.content, column_name=i.name)) +
                         FormReadService.__add_comma(position=content.index(j), size=len(content) - 1)
                     )
                 e = 0
@@ -79,10 +79,10 @@ class FormReadService:
             columns = Column.objects.filter(branch_fk=branch_id)
 
             for i in columns:
-                content = Row.objects.filter(column_fk=i.id)
+                content = Cell.objects.filter(column_fk=i.id)
                 mapped_content = []
                 for j in content:
-                    mapped_content.append(FormReadService.__map_row(j))
+                    mapped_content.append(FormReadService.__map_cell(j))
 
                 response.append({
                     "column": {
@@ -97,7 +97,7 @@ class FormReadService:
             return status.HTTP_500_INTERNAL_SERVER_ERROR
 
     @staticmethod
-    def __map_row(content):
+    def __map_cell(content):
         return {
             "content": content.content,
             "id": content.id
@@ -111,7 +111,7 @@ class FormReadService:
             return ""
 
     @staticmethod
-    def __map_row_csv(content, column_name):
+    def __map_cell_csv(content, column_name):
         return column_name + ": " + content
 
     @staticmethod
@@ -123,7 +123,7 @@ class FormReadService:
         }
 
     @staticmethod
-    def __map_row(content):
+    def __map_cell(content):
         return {
             "content": content.content,
             "id": content.id,

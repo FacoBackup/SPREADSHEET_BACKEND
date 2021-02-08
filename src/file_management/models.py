@@ -16,12 +16,16 @@ class Repository(models.Model):
 class Branch(models.Model):
     id = models.BigAutoField(primary_key=True)
     name = models.TextField()
-    user_fk = models.ForeignKey(User, on_delete=models.DO_NOTHING)
     repository_fk = models.ForeignKey(Repository, on_delete=models.CASCADE)
     is_master = models.BooleanField()
 
     def __int__(self):
         return self.id
+
+
+class Contributor(models.Model):
+    branch_fk = models.ForeignKey(Branch, on_delete=models.CASCADE)
+    user_fk = models.ForeignKey(User, on_delete=models.CASCADE)
 
 
 class Commit(models.Model):
@@ -45,7 +49,7 @@ class Column(models.Model):
         return self.id
 
 
-class Row(models.Model):
+class Cell(models.Model):
     id = models.BigAutoField(primary_key=True)
     column_fk = models.ForeignKey(Column, on_delete=models.CASCADE)
     content = models.TextField()

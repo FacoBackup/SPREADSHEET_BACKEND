@@ -42,3 +42,21 @@ def create_user(
         return status.HTTP_500_INTERNAL_SERVER_ERROR
     except exceptions.PermissionDenied:
         return status.HTTP_500_INTERNAL_SERVER_ERROR
+
+
+def update_profile(user_id, phone, pic, background, about, study):
+    user = User.objects.get(id=user_id)
+    if user is not None:
+        if phone is not None:
+            user.phone = phone
+        if pic is not None:
+            user.pic = pic
+        if background is not None:
+            user.background = background
+        if about is not None:
+            user.about = about
+        if study is not None:
+            user.study = study
+        return status.HTTP_200_OK
+    else:
+        return status.HTTP_404_NOT_FOUND

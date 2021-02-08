@@ -4,10 +4,15 @@
     <list default="true" id="69a6181c-43c9-4fd3-a062-8768f4402a8a" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/file_management/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/file_management/models.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/file_management/services/form/FormFactory.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/file_management/services/form/FormFactory.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/file_management/services/form/FormRead.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/file_management/services/form/FormRead.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/file_management/services/repository/RepositoryFactory.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/file_management/services/repository/RepositoryFactory.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/file_management/services/repository/RepositoryReadService.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/file_management/services/repository/RepositoryReadService.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/file_management/services/repository/RepositoryReadService.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/file_management/services/repository/RepositoryReader.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/file_management/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/file_management/views.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/urls.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/user/services/UserFactory.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/user/services/UserFactory.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/user/services/UserRead.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/user/services/UserRead.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/user/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/user/views.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -23,6 +28,14 @@
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="GitSEFilterConfiguration">
+    <file-type-list>
+      <filtered-out-file-type name="LOCAL_BRANCH" />
+      <filtered-out-file-type name="REMOTE_BRANCH" />
+      <filtered-out-file-type name="TAG" />
+      <filtered-out-file-type name="COMMIT_BY_MESSAGE" />
+    </file-type-list>
   </component>
   <component name="ProjectId" id="1npqjZQ9A4AYFVEXYQ6Qdy1053V" />
   <component name="ProjectViewState">

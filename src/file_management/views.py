@@ -2,7 +2,7 @@ import jwt
 from rest_framework.decorators import (api_view as route)
 from rest_framework.response import Response as callRespond
 from src.file_management.services.form import FormFactory, FormRead
-from src.file_management.services.repository import RepositoryReadService, RepositoryFactory
+from src.file_management.services.repository import RepositoryReader, RepositoryFactory
 from rest_framework import status
 from django.http import HttpResponse
 import time
@@ -10,10 +10,44 @@ import time
 
 @route(['PATCH'])
 def read_latest_commits(request):
-    response = RepositoryReadService.RepositoryReadService.read_latest_commits(user_id=request.data['user_id'])
+    response = RepositoryReader.RepositoryReadService.read_latest_commits(user_id=request.data['user_id'])
     return callRespond(
         response
     )
+
+
+@route(['PUT'])
+def add_contributor(request):
+    token = request.META.get('HTTP_AUTHORIZATION')
+    if token is not None:
+        decoded_token = jwt.decode(token, key="askdasdiuh123i1y98yejas9d812hiu89dqw9", algorithms="HS256")
+        if decoded_token['exp'] > time.time():
+            return callRespond(
+                RepositoryFactory.RepositoryFactory.add_contributor_branch(user_id=request.data['user_id'],
+                                                                           branch_id=request.data['branch_id'],
+                                                                           requester=decoded_token['user_id'])
+            )
+        else:
+            return HttpResponse(status=status.HTTP_401_UNAUTHORIZED)
+    else:
+        return HttpResponse(status=status.HTTP_401_UNAUTHORIZED)
+
+
+@route(['DELETE'])
+def remove_contributor(request):
+    token = request.META.get('HTTP_AUTHORIZATION')
+    if token is not None:
+        decoded_token = jwt.decode(token, key="askdasdiuh123i1y98yejas9d812hiu89dqw9", algorithms="HS256")
+        if decoded_token['exp'] > time.time():
+            return callRespond(
+                RepositoryFactory.RepositoryFactory.remove_contributor_branch(user_id=request.data['user_id'],
+                                                                              branch_id=request.data['branch_id'],
+                                                                              requester=decoded_token['user_id'])
+            )
+        else:
+            return HttpResponse(status=status.HTTP_401_UNAUTHORIZED)
+    else:
+        return HttpResponse(status=status.HTTP_401_UNAUTHORIZED)
 
 
 @route(['PUT'])
@@ -93,7 +127,7 @@ def read_group_repositories(request):
         decoded_token = jwt.decode(token, key="askdasdiuh123i1y98yejas9d812hiu89dqw9", algorithms="HS256")
         if decoded_token['exp'] > time.time():
             return callRespond(
-                RepositoryReadService.RepositoryReadService.read_group_repositories(group_id=request.data['group_id'])
+                RepositoryReader.RepositoryReadService.read_group_repositories(group_id=request.data['group_id'])
             )
         else:
             return HttpResponse(status=status.HTTP_401_UNAUTHORIZED)
@@ -108,7 +142,7 @@ def read_repository_branches(request):
         decoded_token = jwt.decode(token, key="askdasdiuh123i1y98yejas9d812hiu89dqw9", algorithms="HS256")
         if decoded_token['exp'] > time.time():
             return callRespond(
-                RepositoryReadService.
+                RepositoryReader.
                     RepositoryReadService.
                     read_repository_branches(repository_id=request.data['repository_id'])
             )
@@ -125,7 +159,7 @@ def read_branch_commits(request):
         decoded_token = jwt.decode(token, key="askdasdiuh123i1y98yejas9d812hiu89dqw9", algorithms="HS256")
         if decoded_token['exp'] > time.time():
             return callRespond(
-                RepositoryReadService.RepositoryReadService.read_branch_commits(branch_id=request.data['branch_id'])
+                RepositoryReader.RepositoryReadService.read_branch_commits(branch_id=request.data['branch_id'])
             )
         else:
             return HttpResponse(status=status.HTTP_401_UNAUTHORIZED)
@@ -171,7 +205,7 @@ def create_cell(request):
 
 
 @route(['PATCH'])
-def read_all_rows(request):
+def read_all_cells(request):
     token = request.META.get('HTTP_AUTHORIZATION')
     if token is not None:
         decoded_token = jwt.decode(token, key="askdasdiuh123i1y98yejas9d812hiu89dqw9", algorithms="HS256")
@@ -207,7 +241,7 @@ def read_all_cells_by_column(request):
         decoded_token = jwt.decode(token, key="askdasdiuh123i1y98yejas9d812hiu89dqw9", algorithms="HS256")
         if decoded_token['exp'] > time.time():
             return callRespond(
-                FormRead.FormReadService.read_column_rows(column_id=request.data['column_id'])
+                FormRead.FormReadService.read_column_cells(column_id=request.data['column_id'])
             )
         else:
             return HttpResponse(status=status.HTTP_401_UNAUTHORIZED)

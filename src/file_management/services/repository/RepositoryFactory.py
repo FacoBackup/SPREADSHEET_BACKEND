@@ -1,6 +1,6 @@
 from rest_framework import status
 from django.core import exceptions
-from src.file_management.models import Repository, Branch, Commit, Column, Row
+from src.file_management.models import Repository, Branch, Commit, Column, Cell, Contributor
 from src.user.models import User
 from src.group.models import Group
 from src.file_management.services.form import FormFactory, FormRead
@@ -14,9 +14,13 @@ class RepositoryFactory:
         try:
             repository = Repository(group_fk=Group.objects.only("id").get(id=group_id), name=name, about=about)
             repository.save()
-            branch = Branch(name="MASTER", is_master=True, repository_fk=repository,
-                            user_fk=User.objects.only("id").get(id=requester))
+
+            branch = Branch(name="MASTER", is_master=True, repository_fk=repository)
             branch.save()
+
+            contributor = Contributor(user_fk=requester, branch_fk=branch)
+            contributor.save()
+
             return status.HTTP_201_CREATED
         except exceptions.FieldError:
             return status.HTTP_500_INTERNAL_SERVER_ERROR
@@ -24,15 +28,40 @@ class RepositoryFactory:
             return status.HTTP_500_INTERNAL_SERVER_ERROR
 
     @staticmethod
+    def add_contributor_branch(branch_id, user_id, requester):
+        branch = Branch.objects.get(id=branch_id)
+        contributor = Contributor.object.get(user_fk=requester, branch_fk=branch_id)
+        user = User.objects.get(id=user_id)
+        if branch is not None and contributor is not None and user is not None:
+            new_contributor = Contributor(user_fk=user, branch_fk=branch)
+            new_contributor.save()
+            return status.HTTP_201_CREATED
+        else:
+            return status.HTTP_500_INTERNAL_SERVER_ERROR
+
+    @staticmethod
+    def remove_contributor_branch(branch_id, user_id, requester):
+        contributor = Contributor.object.get(user_fk=requester, branch_fk=branch_id)
+        if contributor is not None:
+            to_be_removed = Contributor.objects.get(user_fk=user_id, branch_fk=branch_id)
+            to_be_removed.delete()
+            return status.HTTP_200_OK
+        else:
+            return status.HTTP_401_UNAUTHORIZED
+
+    @staticmethod
     def create_branch(repository_id, requester, name, about):
         try:
             master = Branch.objects.get(repository_fk=repository_id, is_master=True)
             columns = FormRead.FormReadService.read_columns(branch_id=master.id)
-            rows = FormRead.FormReadService.read_all_rows_from_branch(branch_id=master.id)
+            cells = FormRead.FormReadService.read_all_cells_from_branch(branch_id=master.id)
             new_column_relations = []
 
-            new_branch = Branch(repository_fk=repository_id, name=name, about=about, user_fk=requester, is_master=False)
+            new_branch = Branch(repository_fk=repository_id, name=name, about=about, is_master=False)
             new_branch.save()
+
+            new_contributor = Contributor(user_fk=requester, branch_fk=new_branch)
+            new_contributor.save()
 
             for i in columns:
                 new_column = Column(name=i['name'], branch_fk=new_branch.id)
@@ -42,12 +71,12 @@ class RepositoryFactory:
                     "new_column": new_column.id
                 })
 
-            for j in rows:
+            for j in cells:
                 new_column_id = RepositoryFactory.__filter_new_column_id(old_id=j['column_id'],
                                                                          column_relations=new_column_relations)
                 if new_column_id is not None:
-                    new_row = Row(content=j['content'], column_fk=new_column_id)
-                    new_row.save()
+                    new_cell = Cell(content=j['content'], column_fk=new_column_id)
+                    new_cell.save()
 
             return status.HTTP_201_CREATED
         except exceptions.FieldError:
@@ -61,22 +90,22 @@ class RepositoryFactory:
     #     "data": [
     #         {
     #             "column_id": 123,
-    #             "row_id": 1234412,
+    #             "cell_id": 1234412,
     #             "new_content": "THIS IS AN EDITED CELL"
     #         },
     #         {
     #             "column_id": 12334554,
-    #             "row_id": 1234412123,
+    #             "cell_id": 1234412123,
     #             "new_content": "THIS IS AN EDITED CELL"
     #         },
     #         {
     #             "column_id": 123213,
-    #             "row_id": 1234411232,
+    #             "cell_id": 1234411232,
     #             "new_content": "THIS IS AN EDITED CELL"
     #         },
     #         {
     #             "column_id": 123213,
-    #             "row_id": null,
+    #             "cell_id": null,
     #             "new_content": "THIS CELL WAS CREATED NOW"
     #         }
     #     ]
@@ -87,7 +116,7 @@ class RepositoryFactory:
             target_branch = Branch.objects.get(id=target_branch_id)
             source_branch = Branch.objects.get(id=source_branch_id)
 
-            if (target_branch is not None) and\
+            if (target_branch is not None) and \
                     (source_branch is not None) and \
                     (target_branch.repository_fk == source_branch.repository_fk):
                 repository = Repository.objects.get(id=target_branch.repository_fk)
@@ -99,12 +128,13 @@ class RepositoryFactory:
                     columns = FormRead.FormReadService.read_columns(branch_id=source_branch_id)
 
                     for i in columns:
-                        rows = FormRead.FormReadService.read_column_rows(column_id=i['id'])
+                        cells = FormRead.FormReadService.read_column_cells(column_id=i['id'])
                         column_id = FormFactory.FormFactory.create_column(name=i['name'], branch_id=target_branch_id)
 
                         if column_id is not None:
-                            for j in rows:
-                                FormFactory.FormFactory.create_cell(column_id=column_id, content=j['content'], requester=requester)
+                            for j in cells:
+                                FormFactory.FormFactory.create_cell(column_id=column_id, content=j['content'],
+                                                                    requester=requester)
 
                     return status.HTTP_200_OK
                 else:
@@ -125,17 +155,17 @@ class RepositoryFactory:
             if branch is not None:
                 changes = 0
                 for i in data['data']:
-                    if i['row_id'] is not None and \
+                    if i['cell_id'] is not None and \
                             (i['new_content'] != "" and i['new_content'] is not None):
                         changes += 1
-                        row = Row.objects.get(id=i['row_id'])
-                        row.content = i['new_content']
-                        row.save()
-                    elif i['row_id'] is None and \
+                        cell = Cell.objects.get(id=i['cell_id'])
+                        cell.content = i['new_content']
+                        cell.save()
+                    elif i['cell_id'] is None and \
                             (i['new_content'] != "" and i['new_content'] is not None):
                         changes += 1
-                        row = Row(column_fk=i['column_id'], content=i['new_content'])
-                        row.save()
+                        cell = Cell(column_fk=i['column_id'], content=i['new_content'])
+                        cell.save()
 
                 RepositoryFactory.__create_commit(changes=changes,
                                                   branch_id=data['branch_id'],

@@ -21,7 +21,9 @@ from src.file_management import views as file_management_views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+
     # USER
+    path('api/update/profile', user_views.update_profile, name='update_profile'),
     path('api/search/user', user_views.search_user, name="search_user"),
     path('api/user', user_views.create_user, name="create_user"),
     path('api/get/user/by_id', user_views.get_user_by_id, name="get_user_by_id"),
@@ -38,6 +40,8 @@ urlpatterns = [
     # GROUP
 
     # REPOSITORY
+    path('api/add/contributor', file_management_views.add_contributor, name='add_contributor'),
+    path('api/remove/contributor', file_management_views.remove_contributor, name='remove_contributor'),
     path('api/get/latest/commits', file_management_views.read_latest_commits, name="get_latest_commits"),
     path('api/file_management', file_management_views.create_repository, name="create_repository"),
     path('api/branch', file_management_views.create_branch, name="create_branch"),

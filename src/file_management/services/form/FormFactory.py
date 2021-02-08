@@ -1,6 +1,6 @@
 from rest_framework import status
 from django.core import exceptions
-from src.file_management.models import Branch, Column, Row
+from src.file_management.models import Branch, Column, Cell
 
 
 class FormFactory:
@@ -18,9 +18,9 @@ class FormFactory:
     @staticmethod
     def create_cell(content, column_id, requester):
         try:
-            form_content = Row(content=content,
-                               creator=requester,
-                               column_fk=Column.objects.only("id").get(id=column_id))
+            form_content = Cell(content=content,
+                                creator=requester,
+                                column_fk=Column.objects.only("id").get(id=column_id))
             form_content.save()
             return status.HTTP_201_CREATED
         except exceptions.FieldError:
