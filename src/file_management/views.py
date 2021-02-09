@@ -52,8 +52,8 @@ def add_contributor(request):
         if decoded_token['exp'] > time.time():
             return callRespond(
                 status=RepositoryFactory.RepositoryFactory.add_contributor_branch(user_id=request.data['user_id'],
-                                                                           branch_id=request.data['branch_id'],
-                                                                           requester=decoded_token['user_id'])
+                                                                                  branch_id=request.data['branch_id'],
+                                                                                  requester=decoded_token['user_id'])
             )
         else:
             return HttpResponse(status=status.HTTP_401_UNAUTHORIZED)
@@ -69,8 +69,9 @@ def remove_contributor(request):
         if decoded_token['exp'] > time.time():
             return callRespond(
                 status=RepositoryFactory.RepositoryFactory.remove_contributor_branch(user_id=request.data['user_id'],
-                                                                              branch_id=request.data['branch_id'],
-                                                                              requester=decoded_token['user_id'])
+                                                                                     branch_id=request.data[
+                                                                                         'branch_id'],
+                                                                                     requester=decoded_token['user_id'])
             )
         else:
             return HttpResponse(status=status.HTTP_401_UNAUTHORIZED)
@@ -86,8 +87,7 @@ def merge_branches(request):
         if decoded_token['exp'] > time.time():
             return callRespond(
                 status=RepositoryFactory.RepositoryFactory.merge(source_branch_id=request.data['source_branch_id'],
-                                                          target_branch_id=request.data['target_branch_id'],
-                                                          requester=decoded_token['user_id'])
+                                                                 requester=decoded_token['user_id'])
             )
         else:
             return HttpResponse(status=status.HTTP_401_UNAUTHORIZED)
@@ -122,7 +122,7 @@ def create_branch(request):
         decoded_token = jwt.decode(token, key="askdasdiuh123i1y98yejas9d812hiu89dqw9", algorithms="HS256")
         if decoded_token['exp'] > time.time():
             return callRespond(
-                status= RepositoryFactory.
+                status=RepositoryFactory.
                     RepositoryFactory.
                     create_branch(name=request.data['name'],
                                   repository_id=request.data['repository_id'],
@@ -141,7 +141,8 @@ def update_cell(request):
         decoded_token = jwt.decode(token, key="askdasdiuh123i1y98yejas9d812hiu89dqw9", algorithms="HS256")
         if decoded_token['exp'] > time.time():
             return callRespond(
-                status=RepositoryFactory.RepositoryFactory.update_cell(content=request.data['content'], cell_id=request.data['cell_id'])
+                status=RepositoryFactory.RepositoryFactory.update_cell(content=request.data['content'],
+                                                                       cell_id=request.data['cell_id'])
             )
         else:
             return HttpResponse(status=status.HTTP_401_UNAUTHORIZED)
@@ -206,7 +207,7 @@ def create_column(request):
                                                              branch_id=request.data['branch_id'])
             if response is not None:
                 return callRespond(
-                    status.HTTP_201_CREATED
+                    status=status.HTTP_201_CREATED
                 )
             else:
                 return HttpResponse(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
@@ -214,6 +215,13 @@ def create_column(request):
             return HttpResponse(status=status.HTTP_401_UNAUTHORIZED)
     else:
         return HttpResponse(status=status.HTTP_401_UNAUTHORIZED)
+
+
+@route(['PATCH'])
+def read_branch_contributors(request):
+    return callRespond(
+        RepositoryReader.RepositoryReadService.read_branch_contributors(branch_id=request.data['branch_id'])
+    )
 
 
 @route(['POST'])
@@ -224,8 +232,9 @@ def create_cell(request):
         if decoded_token['exp'] > time.time():
 
             return callRespond(
-                status=FormFactory.FormFactory.create_cell(content=request.data['content'], requester=decoded_token['user_id'],
-                                                    column_id=request.data['column_id'])
+                status=FormFactory.FormFactory.create_cell(content=request.data['content'],
+                                                           requester=decoded_token['user_id'],
+                                                           column_id=request.data['column_id'])
             )
         else:
             return HttpResponse(status=status.HTTP_401_UNAUTHORIZED)

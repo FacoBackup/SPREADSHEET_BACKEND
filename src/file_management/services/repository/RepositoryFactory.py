@@ -90,32 +90,34 @@ class RepositoryFactory:
             return status.HTTP_500_INTERNAL_SERVER_ERROR
 
     @staticmethod
-    def merge(source_branch_id, target_branch_id, requester):
+    def merge(source_branch_id, requester):
         try:
-            target_branch = Branch.objects.get(id=target_branch_id)
             source_branch = Branch.objects.get(id=source_branch_id)
+            if source_branch is not None:
+                target_branch = Branch.objects.get(is_master=True, repository_fk=source_branch.repository_fk.id)
+                if (target_branch is not None) and \
+                        (target_branch.repository_fk == source_branch.repository_fk):
+                    repository = Repository.objects.get(id=target_branch.repository_fk)
+                    member = None
+                    if repository is not None:
+                        member = GroupReader.GroupReadService.verify_member(user_id=requester,
+                                                                            group_id=repository.group_fk.id)
 
-            if (target_branch is not None) and \
-                    (source_branch is not None) and \
-                    (target_branch.repository_fk == source_branch.repository_fk):
-                repository = Repository.objects.get(id=target_branch.repository_fk)
-                member = None
-                if repository is not None:
-                    member = GroupReader.GroupReadService.verify_member(user_id=requester, group_id=repository.group_fk)
+                    if member is not None:
+                        columns = FormRead.FormReadService.read_columns(branch_id=source_branch_id)
 
-                if member is not None:
-                    columns = FormRead.FormReadService.read_columns(branch_id=source_branch_id)
+                        for i in columns:
+                            cells = FormRead.FormReadService.read_column_cells(column_id=i['id'])
+                            column_id = FormFactory.FormFactory.create_column(name=i['name'], branch_id=target_branch.id)
 
-                    for i in columns:
-                        cells = FormRead.FormReadService.read_column_cells(column_id=i['id'])
-                        column_id = FormFactory.FormFactory.create_column(name=i['name'], branch_id=target_branch_id)
+                            if column_id is not None:
+                                for j in cells:
+                                    FormFactory.FormFactory.create_cell(column_id=column_id, content=j['content'],
+                                                                        requester=requester)
 
-                        if column_id is not None:
-                            for j in cells:
-                                FormFactory.FormFactory.create_cell(column_id=column_id, content=j['content'],
-                                                                    requester=requester)
-
-                    return status.HTTP_200_OK
+                        return status.HTTP_200_OK
+                    else:
+                        return status.HTTP_424_FAILED_DEPENDENCY
                 else:
                     return status.HTTP_424_FAILED_DEPENDENCY
             else:

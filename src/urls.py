@@ -26,6 +26,7 @@ urlpatterns = [
 
     # REPOSITORY
     path('api/make/commit', file_management_views.make_commit, name='make_commit'),
+    path('api/get/branch/contributors', file_management_views.read_branch_contributors, name="branch_contributors"),
     path('api/user/branches', file_management_views.read_contributor_branches, name='get_user_branches'),
     path('api/add/contributor', file_management_views.add_contributor, name='add_contributor'),
     path('api/remove/contributor', file_management_views.remove_contributor, name='remove_contributor'),

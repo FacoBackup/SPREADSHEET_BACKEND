@@ -1,21 +1,36 @@
 from src.file_management.models import Branch, Commit, Repository, Contributor
 from django.core import exceptions, serializers
 from rest_framework import status
+from src.user.services.UserRead import UserReadService
 
 
 class RepositoryReadService:
     @staticmethod
+    def read_branch_contributors(branch_id):
+        try:
+            contributors = Contributor.objects.filter(branch_fk=branch_id)
+            response = []
+            for i in contributors:
+                user = UserReadService.read_user_by_id(user_id=i.user_fk.id)
+                response.append(user)
+
+            return response
+        except exceptions.ObjectDoesNotExist:
+            return []
+
+    @staticmethod
     def read_branches_user_by_max_id(user_id, max_id):
         try:
             contributor_in = (Contributor
-                              .objects
-                              .filter(user_fk=user_id, branch_fk__lt=max_id)
-                              .order_by('-branch_fk')[:10])
+                                  .objects
+                                  .filter(user_fk=user_id, branch_fk__lt=max_id)
+                                  .order_by('-branch_fk')[:10])
             branches = []
 
             for i in contributor_in:
                 repo = Repository.objects.get(id=i.branch_fk.repository_fk)
-                branch = RepositoryReadService.__map_contributor_branch(Branch.objects.get(id=i.branch_fk.id),repository_name=repo.name)
+                branch = RepositoryReadService.__map_contributor_branch(Branch.objects.get(id=i.branch_fk.id),
+                                                                        repository_name=repo.name)
 
                 if branch is not None:
                     branches.append(branch)
@@ -27,14 +42,14 @@ class RepositoryReadService:
     def read_branches_user(user_id):
         try:
             contributor_in = (Contributor
-                              .objects
-                              .filter(user_fk=user_id)
-                              .order_by('-branch_fk')[:10])
+                                  .objects
+                                  .filter(user_fk=user_id)
+                                  .order_by('-branch_fk')[:10])
             branches = []
 
             for i in contributor_in:
                 repo = Repository.objects.get(id=i.branch_fk.repository_fk)
-                branch = RepositoryReadService.\
+                branch = RepositoryReadService. \
                     __map_contributor_branch(Branch.objects.get(id=i.branch_fk.id), repository_name=repo.name)
                 if branch is not None:
                     branches.append(branch)
@@ -126,5 +141,6 @@ class RepositoryReadService:
             "changes": commit.changes,
             "branch_id": commit.branch_fk.id,
             "commit_time": commit.commit_time,
-            "message": commit.message
+            "message": commit.message,
+            'branch_name': commit.branch_fk.name
         }
