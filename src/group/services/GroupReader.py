@@ -5,6 +5,7 @@ from django.core import exceptions, serializers
 
 class GroupReadService:
 
+
     @staticmethod
     def verify_member(user_id, group_id):
         try:

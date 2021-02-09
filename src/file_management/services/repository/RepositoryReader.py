@@ -2,9 +2,23 @@ from src.file_management.models import Branch, Commit, Repository, Contributor
 from django.core import exceptions, serializers
 from rest_framework import status
 from src.user.services.UserRead import UserReadService
+from src.group.services.GroupReader import GroupReadService
 
 
 class RepositoryReadService:
+    @staticmethod
+    def verify_member_by_branch(branch_id, user_id):
+        try:
+            branch = Branch.objects.get(id=branch_id)
+            if branch is not None:
+                membership = GroupReadService.verify_member(user_id=user_id, group_id=branch.repository_fk.group_fk.id)
+                if membership is not None:
+                    return True
+                else:
+                    return False
+        except exceptions.ObjectDoesNotExist:
+            return False
+
     @staticmethod
     def read_branch_contributors(branch_id):
         try:

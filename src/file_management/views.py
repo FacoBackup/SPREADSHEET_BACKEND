@@ -61,6 +61,22 @@ def add_contributor(request):
         return HttpResponse(status=status.HTTP_401_UNAUTHORIZED)
 
 
+@route(['PATCH'])
+def verify_member_by_branch(request):
+    token = request.META.get('HTTP_AUTHORIZATION')
+    if token is not None:
+        decoded_token = jwt.decode(token, key="askdasdiuh123i1y98yejas9d812hiu89dqw9", algorithms="HS256")
+        if decoded_token['exp'] > time.time():
+            return callRespond(
+                RepositoryReader.RepositoryReadService.verify_member_by_branch(user_id=decoded_token['user_id'],
+                                                                               branch_id=request.data['branch_id'])
+            )
+        else:
+            return HttpResponse(status=status.HTTP_401_UNAUTHORIZED)
+    else:
+        return HttpResponse(status=status.HTTP_401_UNAUTHORIZED)
+
+
 @route(['DELETE'])
 def remove_contributor(request):
     token = request.META.get('HTTP_AUTHORIZATION')

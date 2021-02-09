@@ -18,6 +18,7 @@ urlpatterns = [
     # USER
 
     # GROUP
+
     path('api/group', group_views.create_group, name="create_group"),
     path('api/get/group', group_views.get_group, name="get_group"),
     path('api/get/groups', group_views.get_user_groups, name="get_groups"),
@@ -25,6 +26,7 @@ urlpatterns = [
     # GROUP
 
     # REPOSITORY
+    path('api/member/by/branch', file_management_views.verify_member_by_branch, name="verify_member_by_branch"),
     path('api/make/commit', file_management_views.make_commit, name='make_commit'),
     path('api/get/branch/contributors', file_management_views.read_branch_contributors, name="branch_contributors"),
     path('api/user/branches', file_management_views.read_contributor_branches, name='get_user_branches'),
