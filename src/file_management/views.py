@@ -9,6 +9,25 @@ import time
 
 
 @route(['PATCH'])
+def make_commit(request):
+    token = request.META.get('HTTP_AUTHORIZATION')
+    if token is not None:
+        decoded_token = jwt.decode(token, key="askdasdiuh123i1y98yejas9d812hiu89dqw9", algorithms="HS256")
+        if decoded_token['exp'] > time.time():
+            return HttpResponse(
+                status=RepositoryFactory.RepositoryFactory.create_commit(
+                    branch_id=request.data['branch_id'],
+                    message=request.data['message'],
+                    user_id=decoded_token['user_id'],
+                    changes=request.data['changes'])
+            )
+        else:
+            return HttpResponse(status=status.HTTP_401_UNAUTHORIZED)
+    else:
+        return HttpResponse(status=status.HTTP_401_UNAUTHORIZED)
+
+
+@route(['PATCH'])
 def read_contributor_branches(request):
     if request.data['max_id'] is None:
         return callRespond(RepositoryReader.RepositoryReadService.read_branches_user(user_id=request.data['user_id']))

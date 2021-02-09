@@ -153,38 +153,80 @@ class RepositoryFactory:
         except exceptions.ObjectDoesNotExist:
             return status.HTTP_500_INTERNAL_SERVER_ERROR
 
+    # {
+    #     "branch_id": 1,
+    #     "data": [
+    #         {
+    #             "column_id": 1,
+    #             "cell_id": 1,
+    #             "content": "SOME VALUE"
+    #         },
+    #         {
+    #             "column_id": 2,
+    #             "cell_id": 2,
+    #             "content": null
+    #         },
+    #         {
+    #             "column_id": 3,
+    #             "cell_id": null,
+    #             "content": "SOME VALUE"
+    #         }
+    #     ]
+    # }
+    # CELL_ID === NULL? CREATE CELL : EDIT CELL
+    # CONTENT === NULL? DELETE CELL
     @staticmethod
-    def save_changes(data, requester):
+    def save_changes(row):
         try:
-            branch = Branch.objects.get(id=data['branch_id'], user_fk=requester)
+            branch = Branch.objects.get(id=row['branch_id'])
             if branch is not None:
-                changes = 0
-                for i in data['data']:
-                    if i['cell_id'] is not None and \
-                            (i['new_content'] != "" and i['new_content'] is not None):
-                        changes += 1
+                for i in row['data']:
+                    if i['cell_id'] is None and i['content'] is not None:
+                        new_cell = Cell(column_fk=i['column_id'], content=i['content'])
+                        new_cell.save()
+                    elif i['content'] is None:
                         cell = Cell.objects.get(id=i['cell_id'])
-                        cell.content = i['new_content']
+                        cell.delete()
+                    elif i['cell_id'] is not None and i['content'] is not None:
+                        cell = Cell.objects.get(id=i['cell_id'])
+                        cell.content = i['content']
                         cell.save()
-                    elif i['cell_id'] is None and \
-                            (i['new_content'] != "" and i['new_content'] is not None):
-                        changes += 1
-                        cell = Cell(column_fk=i['column_id'], content=i['new_content'])
-                        cell.save()
-
-                RepositoryFactory.__create_commit(changes=changes,
-                                                  branch_id=data['branch_id'],
-                                                  message=data['commit_message'],
-                                                  user_id=requester
-                                                  )
-
         except exceptions.FieldError:
             return status.HTTP_500_INTERNAL_SERVER_ERROR
         except exceptions.PermissionDenied:
             return status.HTTP_500_INTERNAL_SERVER_ERROR
+    # @staticmethod
+    # def save_changes(data, requester):
+    #     try:
+    #         branch = Branch.objects.get(id=data['branch_id'], user_fk=requester)
+    #         if branch is not None:
+    #             changes = 0
+    #             for i in data['data']:
+    #                 if i['cell_id'] is not None and \
+    #                         (i['new_content'] != "" and i['new_content'] is not None):
+    #                     changes += 1
+    #                     cell = Cell.objects.get(id=i['cell_id'])
+    #                     cell.content = i['new_content']
+    #                     cell.save()
+    #                 elif i['cell_id'] is None and \
+    #                         (i['new_content'] != "" and i['new_content'] is not None):
+    #                     changes += 1
+    #                     cell = Cell(column_fk=i['column_id'], content=i['new_content'])
+    #                     cell.save()
+    #
+    #             RepositoryFactory.__create_commit(changes=changes,
+    #                                               branch_id=data['branch_id'],
+    #                                               message=data['commit_message'],
+    #                                               user_id=requester
+    #                                               )
+    #
+    #     except exceptions.FieldError:
+    #         return status.HTTP_500_INTERNAL_SERVER_ERROR
+    #     except exceptions.PermissionDenied:
+    #         return status.HTTP_500_INTERNAL_SERVER_ERROR
 
     @staticmethod
-    def __create_commit(changes, branch_id, message, user_id):
+    def create_commit(changes, branch_id, message, user_id):
         try:
             commit = Commit(message=message,
                             changes=changes,
