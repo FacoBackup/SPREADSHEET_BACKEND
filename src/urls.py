@@ -41,6 +41,7 @@ urlpatterns = [
     # FORM
     path('api/branch/column', file_management_views.create_column, name="create_column"),
     path('api/branch/cell', file_management_views.create_cell, name="create_cell"),
+    path('api/branch/update/cell', file_management_views.update_cell, name="update_cell"),
     path('api/get/branch/columns', file_management_views.read_all_columns, name="get_all_columns"),
     path('api/get/branch/content', file_management_views.read_all_content_by_branch, name="get_all_content"),
     path('api/get/cells/column', file_management_views.read_all_cells_by_column, name="get_cells_by_column"),

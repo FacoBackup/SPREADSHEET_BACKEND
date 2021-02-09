@@ -72,10 +72,51 @@ class FormReadService:
         except exceptions.ObjectDoesNotExist:
             return status.HTTP_500_INTERNAL_SERVER_ERROR
 
+    # [
+    #     {
+    #         "column_id": 1,
+    #         "column_name": "COLUMN 1",
+    #         "cells": [
+    #             {
+    #                 "cell_id": 1,
+    #                 "content": "algo"
+    #             },
+    #             {
+    #                 "cell_id": 2,
+    #                 "content": "algo dnv"
+    #             },
+    #             {
+    #                 "cell_id": 3,
+    #                 "content": "algo dnv dnv"
+    #             }
+    #         ]
+    #     },
+    #     {
+    #         "column_id": 2,
+    #         "column_name": "COLUMN 2",
+    #         "cells": [
+    #             {
+    #                 "cell_id": 4,
+    #                 "content": "algo"
+    #             },
+    #             {
+    #                 "cell_id": 5,
+    #                 "content": "algo dnv"
+    #             },
+    #             {
+    #                 "cell_id": 6,
+    #                 "content": "algo dnv dnv"
+    #             }
+    #         ]},
+    #     {},
+    #     {}
+    #
+    # ]
     @staticmethod
     def read_all_content_by_branch(branch_id):
         try:
             response = []
+
             columns = Column.objects.filter(branch_fk=branch_id)
 
             for i in columns:
@@ -85,11 +126,9 @@ class FormReadService:
                     mapped_content.append(FormReadService.__map_cell(j))
 
                 response.append({
-                    "column": {
-                        "name": i.name,
-                        "id": i.id
-                    },
-                    "content": mapped_content
+                    "column_id": i.id,
+                    "column_name": i.name,
+                    "cells": mapped_content
                 })
 
             return response

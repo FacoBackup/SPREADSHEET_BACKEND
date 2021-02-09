@@ -8,7 +8,7 @@ from django.http import HttpResponse
 import time
 
 
-@route(['PATCH'])
+@route(['POST'])
 def make_commit(request):
     token = request.META.get('HTTP_AUTHORIZATION')
     if token is not None:
@@ -51,7 +51,7 @@ def add_contributor(request):
         decoded_token = jwt.decode(token, key="askdasdiuh123i1y98yejas9d812hiu89dqw9", algorithms="HS256")
         if decoded_token['exp'] > time.time():
             return callRespond(
-                RepositoryFactory.RepositoryFactory.add_contributor_branch(user_id=request.data['user_id'],
+                status=RepositoryFactory.RepositoryFactory.add_contributor_branch(user_id=request.data['user_id'],
                                                                            branch_id=request.data['branch_id'],
                                                                            requester=decoded_token['user_id'])
             )
@@ -68,7 +68,7 @@ def remove_contributor(request):
         decoded_token = jwt.decode(token, key="askdasdiuh123i1y98yejas9d812hiu89dqw9", algorithms="HS256")
         if decoded_token['exp'] > time.time():
             return callRespond(
-                RepositoryFactory.RepositoryFactory.remove_contributor_branch(user_id=request.data['user_id'],
+                status=RepositoryFactory.RepositoryFactory.remove_contributor_branch(user_id=request.data['user_id'],
                                                                               branch_id=request.data['branch_id'],
                                                                               requester=decoded_token['user_id'])
             )
@@ -85,7 +85,7 @@ def merge_branches(request):
         decoded_token = jwt.decode(token, key="askdasdiuh123i1y98yejas9d812hiu89dqw9", algorithms="HS256")
         if decoded_token['exp'] > time.time():
             return callRespond(
-                RepositoryFactory.RepositoryFactory.merge(source_branch_id=request.data['source_branch_id'],
+                status=RepositoryFactory.RepositoryFactory.merge(source_branch_id=request.data['source_branch_id'],
                                                           target_branch_id=request.data['target_branch_id'],
                                                           requester=decoded_token['user_id'])
             )
@@ -102,12 +102,12 @@ def create_repository(request):
         decoded_token = jwt.decode(token, key="askdasdiuh123i1y98yejas9d812hiu89dqw9", algorithms="HS256")
         if decoded_token['exp'] > time.time():
             return callRespond(
-                RepositoryFactory.
-                RepositoryFactory.
-                create_repository(name=request.data['name'],
-                                  about=request.data['about'],
-                                  group_id=request.data['group_id'],
-                                  requester=decoded_token['user_id'])
+                status=RepositoryFactory.
+                    RepositoryFactory.
+                    create_repository(name=request.data['name'],
+                                      about=request.data['about'],
+                                      group_id=request.data['group_id'],
+                                      requester=decoded_token['user_id'])
             )
         else:
             return HttpResponse(status=status.HTTP_401_UNAUTHORIZED)
@@ -122,7 +122,7 @@ def create_branch(request):
         decoded_token = jwt.decode(token, key="askdasdiuh123i1y98yejas9d812hiu89dqw9", algorithms="HS256")
         if decoded_token['exp'] > time.time():
             return callRespond(
-                RepositoryFactory.
+                status= RepositoryFactory.
                     RepositoryFactory.
                     create_branch(name=request.data['name'],
                                   repository_id=request.data['repository_id'],
@@ -134,14 +134,14 @@ def create_branch(request):
         return HttpResponse(status=status.HTTP_401_UNAUTHORIZED)
 
 
-@route(['POST'])
-def save_changes(request):
+@route(['PUT'])
+def update_cell(request):
     token = request.META.get('HTTP_AUTHORIZATION')
     if token is not None:
         decoded_token = jwt.decode(token, key="askdasdiuh123i1y98yejas9d812hiu89dqw9", algorithms="HS256")
         if decoded_token['exp'] > time.time():
             return callRespond(
-                RepositoryFactory.RepositoryFactory.save_changes(data=request.data, requester=decoded_token['user_id'])
+                status=RepositoryFactory.RepositoryFactory.update_cell(content=request.data['content'], cell_id=request.data['cell_id'])
             )
         else:
             return HttpResponse(status=status.HTTP_401_UNAUTHORIZED)
@@ -224,7 +224,7 @@ def create_cell(request):
         if decoded_token['exp'] > time.time():
 
             return callRespond(
-                FormFactory.FormFactory.create_cell(content=request.data['content'], requester=decoded_token['user_id'],
+                status=FormFactory.FormFactory.create_cell(content=request.data['content'], requester=decoded_token['user_id'],
                                                     column_id=request.data['column_id'])
             )
         else:
@@ -280,14 +280,6 @@ def read_all_cells_by_column(request):
 
 @route(['PATCH'])
 def read_all_content_by_branch(request):
-    token = request.META.get('HTTP_AUTHORIZATION')
-    if token is not None:
-        decoded_token = jwt.decode(token, key="askdasdiuh123i1y98yejas9d812hiu89dqw9", algorithms="HS256")
-        if decoded_token['exp'] > time.time():
-            return callRespond(
-                FormRead.FormReadService.read_all_content_by_branch(branch_id=request.data['branch_id'])
-            )
-        else:
-            return HttpResponse(status=status.HTTP_401_UNAUTHORIZED)
-    else:
-        return HttpResponse(status=status.HTTP_401_UNAUTHORIZED)
+    return callRespond(
+        FormRead.FormReadService.read_all_content_by_branch(branch_id=request.data['branch_id'])
+    )

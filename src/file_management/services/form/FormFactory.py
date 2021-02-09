@@ -19,7 +19,6 @@ class FormFactory:
     def create_cell(content, column_id, requester):
         try:
             form_content = Cell(content=content,
-                                creator=requester,
                                 column_fk=Column.objects.get(id=column_id))
             form_content.save()
             return status.HTTP_201_CREATED
