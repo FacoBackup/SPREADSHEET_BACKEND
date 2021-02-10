@@ -22,35 +22,3 @@ def get_group(request):
         GroupReader.GroupReadService.read_group(request.data['group_id'])
     )
 
-
-@route(['PATCH'])
-def get_user_groups(request):
-    token = request.META.get('HTTP_AUTHORIZATION')
-    if token is not None:
-        decoded_token = jwt.decode(token, key="askdasdiuh123i1y98yejas9d812hiu89dqw9", algorithms="HS256")
-        if decoded_token['exp'] > time.time():
-            return callRespond(
-                GroupReader.GroupReadService.read_groups_user(request.data['user_id'])
-            )
-        else:
-            return HttpResponse(status=status.HTTP_401_UNAUTHORIZED)
-
-    else:
-        return HttpResponse(status=status.HTTP_401_UNAUTHORIZED)
-
-
-@route(['PATCH'])
-def get_groups_by_user_max_id(request):
-    token = request.META.get('HTTP_AUTHORIZATION')
-    if token is not None:
-        decoded_token = jwt.decode(token, key="askdasdiuh123i1y98yejas9d812hiu89dqw9", algorithms="HS256")
-        if decoded_token['exp'] > time.time():
-            return callRespond(
-                GroupReader.GroupReadService.read_groups_user_max_id(request.data['user_id'],
-                                                                     max_id=request.data['max_id'])
-            )
-        else:
-            return HttpResponse(status=status.HTTP_401_UNAUTHORIZED)
-
-    else:
-        return HttpResponse(status=status.HTTP_401_UNAUTHORIZED)

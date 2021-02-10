@@ -11,9 +11,7 @@ class UserReadService:
     @staticmethod
     def search_user(search_input):
         try:
-            print("HERE")
-            print(search_input)
-            user_query = User.objects.filter(Q(name__contains=search_input) | Q(email__contains=search_input))
+            user_query = User.objects.filter(Q(name__icontains=search_input) | Q(email__icontains=search_input))
             response = []
             for i in user_query:
                 group = GroupReadService.read_first_group(user_id=i.id)

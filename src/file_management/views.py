@@ -296,36 +296,6 @@ def read_all_cells(request):
 
 
 @route(['PATCH'])
-def read_all_columns(request):
-    token = request.META.get('HTTP_AUTHORIZATION')
-    if token is not None:
-        decoded_token = jwt.decode(token, key="askdasdiuh123i1y98yejas9d812hiu89dqw9", algorithms="HS256")
-        if decoded_token['exp'] > time.time():
-            return callRespond(
-                FormRead.FormReadService.read_columns(branch_id=request.data['branch_id'])
-            )
-        else:
-            return HttpResponse(status=status.HTTP_401_UNAUTHORIZED)
-    else:
-        return HttpResponse(status=status.HTTP_401_UNAUTHORIZED)
-
-
-@route(['PATCH'])
-def read_all_cells_by_column(request):
-    token = request.META.get('HTTP_AUTHORIZATION')
-    if token is not None:
-        decoded_token = jwt.decode(token, key="askdasdiuh123i1y98yejas9d812hiu89dqw9", algorithms="HS256")
-        if decoded_token['exp'] > time.time():
-            return callRespond(
-                FormRead.FormReadService.read_column_cells(column_id=request.data['column_id'])
-            )
-        else:
-            return HttpResponse(status=status.HTTP_401_UNAUTHORIZED)
-    else:
-        return HttpResponse(status=status.HTTP_401_UNAUTHORIZED)
-
-
-@route(['PATCH'])
 def read_all_content_by_branch(request):
     return callRespond(
         FormRead.FormReadService.read_all_content_by_branch(branch_id=request.data['branch_id'])

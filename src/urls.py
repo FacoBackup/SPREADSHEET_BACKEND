@@ -29,10 +29,6 @@ urlpatterns = [
     path('api/group', group_views.create_group, name="create_group"),
     #OK
     path('api/get/group', group_views.get_group, name="get_group"),
-    #NOT USED
-    path('api/get/groups', group_views.get_user_groups, name="get_groups"),
-    #NOT USED
-    path('api/get/groups/by_max_id', group_views.get_groups_by_user_max_id, name="get_groups_by_max_id"),
     #SEARCH GROUP TODO
     # GROUP
 
@@ -76,11 +72,7 @@ urlpatterns = [
     path('api/branch/cell', file_management_views.create_cell, name="create_cell"),
     #OK
     path('api/branch/update/cell', file_management_views.update_cell, name="update_cell"),
-    #NOT USED
-    path('api/get/branch/columns', file_management_views.read_all_columns, name="get_all_columns"),
     #OK
     path('api/get/branch/content', file_management_views.read_all_content_by_branch, name="get_all_content"),
-    #NOT USED
-    path('api/get/cells/column', file_management_views.read_all_cells_by_column, name="get_cells_by_column"),
     # FORM
 ]
