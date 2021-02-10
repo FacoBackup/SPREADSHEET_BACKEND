@@ -50,9 +50,11 @@ class Column(models.Model):
 
 
 class Cell(models.Model):
+
     id = models.BigAutoField(primary_key=True)
     column_fk = models.ForeignKey(Column, on_delete=models.CASCADE)
     content = models.TextField()
+    row = models.BigIntegerField()
 
     def __int__(self):
         return self.id

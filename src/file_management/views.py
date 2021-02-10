@@ -8,6 +8,23 @@ from django.http import HttpResponse
 import time
 
 
+@route(['PATCH'])
+def read_repository(request):
+    token = request.META.get('HTTP_AUTHORIZATION')
+    if token is not None:
+        decoded_token = jwt.decode(token, key="askdasdiuh123i1y98yejas9d812hiu89dqw9", algorithms="HS256")
+        if decoded_token['exp'] > time.time():
+            data = RepositoryReader.RepositoryReadService.read_repository(repository_id=request.data['repository_id'])
+            if data is not None:
+                return HttpResponse(data)
+            else:
+                return HttpResponse(status=status.HTTP_404_NOT_FOUND)
+        else:
+            return HttpResponse(status=status.HTTP_401_UNAUTHORIZED)
+    else:
+        return HttpResponse(status=status.HTTP_401_UNAUTHORIZED)
+
+
 @route(['POST'])
 def make_commit(request):
     token = request.META.get('HTTP_AUTHORIZATION')
@@ -166,7 +183,12 @@ def update_cell(request):
         return HttpResponse(status=status.HTTP_401_UNAUTHORIZED)
 
 
-@route(['POST'])
+@route(['PATCH'])
+def export_formatted_json(request):
+    return callRespond(FormRead.FormReadService.formatted_json(branch_id=request.data['branch_id']))
+
+
+@route(['PATCH'])
 def read_group_repositories(request):
     token = request.META.get('HTTP_AUTHORIZATION')
     if token is not None:
@@ -181,7 +203,7 @@ def read_group_repositories(request):
         return HttpResponse(status=status.HTTP_401_UNAUTHORIZED)
 
 
-@route(['POST'])
+@route(['PATCH'])
 def read_repository_branches(request):
     token = request.META.get('HTTP_AUTHORIZATION')
     if token is not None:
@@ -198,7 +220,7 @@ def read_repository_branches(request):
         return HttpResponse(status=status.HTTP_401_UNAUTHORIZED)
 
 
-@route(['POST'])
+@route(['PATCH'])
 def read_branch_commits(request):
     token = request.META.get('HTTP_AUTHORIZATION')
     if token is not None:
@@ -249,7 +271,7 @@ def create_cell(request):
 
             return callRespond(
                 status=FormFactory.FormFactory.create_cell(content=request.data['content'],
-                                                           requester=decoded_token['user_id'],
+                                                           row=request.data['row'],
                                                            column_id=request.data['column_id'])
             )
         else:

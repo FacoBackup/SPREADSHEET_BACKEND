@@ -16,11 +16,15 @@ class FormFactory:
             return None
 
     @staticmethod
-    def create_cell(content, column_id, requester):
+    def create_cell(content, column_id, row):
         try:
-            form_content = Cell(content=content,
-                                column_fk=Column.objects.get(id=column_id))
-            form_content.save()
+            print("THIS IS THE ROW")
+            print(row)
+            column = Column.objects.get(id=column_id)
+            if column is not None:
+                cell = Cell(content=content, column_fk=column, row=row)
+                cell.save()
+
             return status.HTTP_201_CREATED
         except exceptions.FieldError:
             return status.HTTP_500_INTERNAL_SERVER_ERROR

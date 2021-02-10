@@ -1,6 +1,9 @@
+from django.db.models import Max
+
 from src.file_management.models import Repository, Column, Cell
 from django.core import exceptions, serializers
 from rest_framework import status
+import json
 
 
 class FormReadService:
@@ -47,27 +50,28 @@ class FormReadService:
             return status.HTTP_500_INTERNAL_SERVER_ERROR
 
     @staticmethod
-    def export_json_to_csv(branch_id):
+    def __map_cell_json(cell):
+        return {cell.column_fk.name: cell.content}
+
+    @staticmethod
+    def formatted_json(branch_id):
         try:
+            max_row = Cell.objects.aggregate(Max('row'))['row__max']
+            objects = []
             response = []
-            columns = Column.objects.filter(branch_fk=branch_id)
+            print("MAX ROW " + str(max_row))
 
-            for i in columns:
-                content = Cell.objects.filter(column_fk=i.id)
-                mapped_content = []
-                for j in content:
-                    mapped_content.append(
-                        str(FormReadService.__map_cell_csv(j.content, column_name=i.name)) +
-                        FormReadService.__add_comma(position=content.index(j), size=len(content) - 1)
-                    )
-                e = 0
-                response.append(
-                    "{" +
-                    ", ".join(mapped_content)
-                    +
-                    " }"
-                )
+            for i in range(max_row + 1):
+                row = []
+                row_cells = Cell.objects.filter(column_fk__branch_fk__id=branch_id, row=i)
+                print("CURRENT ROW " + str(i))
+                for j in row_cells:
+                    row.append(FormReadService.__map_cell_json(j))
 
+                objects.append(row)
+            for j in range(len(objects)):
+                response.append(json.loads(
+                    json.dumps(objects[j]).replace('{', "").replace('}', "").replace('[', "{").replace(']', "}")))
             return response
         except exceptions.ObjectDoesNotExist:
             return status.HTTP_500_INTERNAL_SERVER_ERROR
@@ -136,24 +140,6 @@ class FormReadService:
             return status.HTTP_500_INTERNAL_SERVER_ERROR
 
     @staticmethod
-    def __map_cell(content):
-        return {
-            "content": content.content,
-            "id": content.id
-        }
-
-    @staticmethod
-    def __add_comma(position, size):
-        if position < size:
-            return ", "
-        else:
-            return ""
-
-    @staticmethod
-    def __map_cell_csv(content, column_name):
-        return column_name + ": " + content
-
-    @staticmethod
     def __map_column(field):
         return {
             "id": field.id,
@@ -166,5 +152,6 @@ class FormReadService:
         return {
             "content": content.content,
             "id": content.id,
-            "column_id": content.column_fk.id
+            "column_id": content.column_fk.id,
+            "row": content.row
         }

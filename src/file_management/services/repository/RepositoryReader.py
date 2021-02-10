@@ -7,6 +7,17 @@ from src.group.services.GroupReader import GroupReadService
 
 class RepositoryReadService:
     @staticmethod
+    def read_repository(repository_id):
+        try:
+            repository = Repository.objects.get(id=repository_id)
+            if repository is not None:
+                return RepositoryReadService.__map_repository(repository)
+            else:
+                return None
+        except exceptions.ObjectDoesNotExist:
+            return None
+
+    @staticmethod
     def verify_member_by_branch(branch_id, user_id):
         try:
             branch = Branch.objects.get(id=branch_id)
@@ -74,7 +85,7 @@ class RepositoryReadService:
     @staticmethod
     def read_latest_commits(user_id):
         try:
-            commits = Commit.objects.filter(user_fk=user_id).order_by('-commit_time')[:3]
+            commits = Commit.objects.filter(user_fk=user_id).order_by('-commit_time')[:2]
             response = []
             for i in commits:
                 response.append(RepositoryReadService.__map_commit(i))
