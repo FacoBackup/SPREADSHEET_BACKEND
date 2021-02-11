@@ -3,7 +3,7 @@ from django.core import exceptions
 from src.file_management.models import Repository, Branch, Commit, Column, Cell, Contributor
 from src.user.models import User
 from src.group.models import Group
-from src.file_management.services.form import FormFactory, FormRead
+from src.file_management.services.form import FormFactory, FormReader
 from src.group.services import GroupManagement, GroupReader
 import time
 
@@ -93,8 +93,8 @@ class RepositoryFactory:
         try:
             target_branch = Branch.objects.get(repository_fk=target_branch_id)
             if target_branch is not None:
-                columns = FormRead.FormReadService.read_columns(branch_id=target_branch.id)
-                cells = FormRead.FormReadService.read_all_cells_from_branch(branch_id=target_branch.id)
+                columns = FormReader.FormReadService.read_columns(branch_id=target_branch.id)
+                cells = FormReader.FormReadService.read_all_cells_from_branch(branch_id=target_branch.id)
                 new_column_relations = []
 
                 new_branch = Branch(repository_fk=target_branch.repository_fk, name=name, about=about, is_master=False)
@@ -141,10 +141,10 @@ class RepositoryFactory:
                                                                             group_id=repository.group_fk.id)
 
                     if member is not None:
-                        columns = FormRead.FormReadService.read_columns(branch_id=source_branch_id)
+                        columns = FormReader.FormReadService.read_columns(branch_id=source_branch_id)
 
                         for i in columns:
-                            cells = FormRead.FormReadService.read_column_cells(column_id=i['id'])
+                            cells = FormReader.FormReadService.read_column_cells(column_id=i['id'])
                             column_id = FormFactory.FormFactory.create_column(name=i['name'], branch_id=target_branch.id)
 
                             if column_id is not None:

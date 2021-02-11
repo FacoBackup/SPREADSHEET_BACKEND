@@ -1,7 +1,7 @@
 import jwt
 from rest_framework.decorators import (api_view as route)
 from rest_framework.response import Response as callRespond
-from src.file_management.services.form import FormFactory, FormRead
+from src.file_management.services.form import FormFactory, FormReader
 from src.file_management.services.repository import RepositoryReader, RepositoryFactory
 from rest_framework import status
 from django.http import HttpResponse
@@ -220,7 +220,7 @@ def update_cell(request):
 
 @route(['PATCH'])
 def export_formatted_json(request):
-    return callRespond(FormRead.FormReadService.formatted_json(branch_id=request.data['branch_id']))
+    return callRespond(FormReader.FormReadService.formatted_json(branch_id=request.data['branch_id']))
 
 
 @route(['PATCH'])
@@ -322,7 +322,7 @@ def read_all_cells(request):
         decoded_token = jwt.decode(token, key="askdasdiuh123i1y98yejas9d812hiu89dqw9", algorithms="HS256")
         if decoded_token['exp'] > time.time():
             return callRespond(
-                FormRead.FormReadService.read_all_content_by_branch(branch_id=request.data['branch_id'])
+                FormReader.FormReadService.read_all_content_by_branch(branch_id=request.data['branch_id'])
             )
         else:
             return HttpResponse(status=status.HTTP_401_UNAUTHORIZED)
@@ -333,5 +333,5 @@ def read_all_cells(request):
 @route(['PATCH'])
 def read_all_content_by_branch(request):
     return callRespond(
-        FormRead.FormReadService.read_all_content_by_branch(branch_id=request.data['branch_id'])
+        FormReader.FormReadService.read_all_content_by_branch(branch_id=request.data['branch_id'])
     )

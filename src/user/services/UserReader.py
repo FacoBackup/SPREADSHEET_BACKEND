@@ -16,9 +16,9 @@ class UserReadService:
             for i in user_query:
                 group = GroupReadService.read_first_group(user_id=i.id)
                 if group is not None:
-                    response.append(UserReadService.__map_user(i, group_id=group['group_id']))
+                    response.append(UserReadService.map_user(i, group_id=group['group_id']))
                 else:
-                    response.append(UserReadService.__map_user(i, group_id=None))
+                    response.append(UserReadService.map_user(i, group_id=None))
             return response
         except exceptions.ObjectDoesNotExist:
             return status.HTTP_500_INTERNAL_SERVER_ERROR
@@ -28,7 +28,7 @@ class UserReadService:
         try:
             user_query = User.objects.get(email=email)
             if user_query is not None:
-                return UserReadService.__map_user(user_query, None)
+                return UserReadService.map_user(user_query, None)
         except exceptions.ObjectDoesNotExist:
             return None
         except exceptions.FieldError:
@@ -40,9 +40,9 @@ class UserReadService:
             user_query = User.objects.get(id=user_id)
             group = GroupReadService.read_first_group(user_id=user_id)
             if group is not None:
-                return UserReadService.__map_user(user_query, group['group_id'])
+                return UserReadService.map_user(user_query, group['group_id'])
             else:
-                return UserReadService.__map_user(user_query, None)
+                return UserReadService.map_user(user_query, None)
         except exceptions.ObjectDoesNotExist:
             return None
 
@@ -54,9 +54,9 @@ class UserReadService:
             for i in user_query:
                 group = GroupReadService.read_first_group(user_id=i.id)
                 if group is not None:
-                    response.append(UserReadService.__map_user(i, group_id=group['group_id']))
+                    response.append(UserReadService.map_user(i, group_id=group['group_id']))
                 else:
-                    response.append(UserReadService.__map_user(i, group_id=None))
+                    response.append(UserReadService.map_user(i, group_id=None))
             return response
 
         except exceptions.ObjectDoesNotExist:
@@ -70,9 +70,9 @@ class UserReadService:
             for i in user_query:
                 group = GroupReadService.read_first_group(user_id=i.id)
                 if group is not None:
-                    response.append(UserReadService.__map_user(i, group_id=group['group_id']))
+                    response.append(UserReadService.map_user(i, group_id=group['group_id']))
                 else:
-                    response.append(UserReadService.__map_user(i, group_id=None))
+                    response.append(UserReadService.map_user(i, group_id=None))
             return response
         except exceptions.ObjectDoesNotExist:
             return status.HTTP_500_INTERNAL_SERVER_ERROR
@@ -85,16 +85,16 @@ class UserReadService:
             for i in user_query:
                 group = GroupReadService.read_first_group(user_id=i.id)
                 if group is not None:
-                    response.append(UserReadService.__map_user(i, group_id=group['group_id']))
+                    response.append(UserReadService.map_user(i, group_id=group['group_id']))
                 else:
-                    response.append(UserReadService.__map_user(i, group_id=None))
+                    response.append(UserReadService.map_user(i, group_id=None))
             return response
 
         except exceptions.ObjectDoesNotExist:
             return status.HTTP_500_INTERNAL_SERVER_ERROR
 
     @staticmethod
-    def __map_user(user, group_id):
+    def map_user(user, group_id):
         return {
             'id': user.id,
             'name': user.name,

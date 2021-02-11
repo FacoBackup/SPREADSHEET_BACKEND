@@ -1,7 +1,7 @@
 from rest_framework.decorators import (api_view as route)
 from rest_framework.response import Response as callRespond
 from django.http import HttpResponse
-from src.user.services import UserRead, UserFactory
+from src.user.services import UserReader, UserFactory
 from src.user.services import Auth
 
 
@@ -31,28 +31,28 @@ def update_profile(request):
 
 @route(['PATCH'])
 def get_user_by_id(request):
-    data = UserRead.UserReadService.read_user_by_id(request.data['user_id'])
+    data = UserReader.UserReadService.read_user_by_id(request.data['user_id'])
     return callRespond(data)
 
 
 @route(['PATCH'])
 def search_user(request):
-    data = UserRead.UserReadService.search_user(search_input=request.data['search_input'])
+    data = UserReader.UserReadService.search_user(search_input=request.data['search_input'])
     return callRespond(data)
 
 
 @route(['PATCH'])
 def get_user_by_max_id(request):
-    data = UserRead.UserReadService.read_user_by_max_id(request.data['max_id'])
+    data = UserReader.UserReadService.read_user_by_max_id(request.data['max_id'])
     return callRespond(data)
 
 
 @route(['PATCH'])
 def get_users(request):
     if request.data['max_id'] is None:
-        return callRespond(UserRead.UserReadService.read_users())
+        return callRespond(UserReader.UserReadService.read_users())
     else:
-        return callRespond(UserRead.UserReadService.read_user_by_max_id(request.data['max_id']))
+        return callRespond(UserReader.UserReadService.read_user_by_max_id(request.data['max_id']))
 
 
 @route(['POST'])

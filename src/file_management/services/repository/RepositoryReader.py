@@ -1,7 +1,7 @@
 from src.file_management.models import Branch, Commit, Repository, Contributor
 from django.core import exceptions, serializers
 from rest_framework import status
-from src.user.services.UserRead import UserReadService
+from src.user.services.UserReader import UserReadService
 from src.group.services.GroupReader import GroupReadService
 
 

@@ -2,9 +2,6 @@ from rest_framework.decorators import (api_view as route)
 from rest_framework.response import Response as callRespond
 from src.group.services import GroupFactory, GroupReader
 from django.http import HttpResponse
-import jwt
-import time
-from rest_framework import status
 
 
 @route(['POST'])
@@ -17,8 +14,21 @@ def create_group(request):
 
 
 @route(['PATCH'])
+def get_group_members(request):
+    return callRespond(
+        GroupReader.GroupReadService.read_group_members(group_id=request.data['group_id'])
+    )
+
+
+@route(['PATCH'])
+def search_group(request):
+    return callRespond(
+        GroupReader.GroupReadService.search_group(search_input=request.data['search_input'])
+    )
+
+
+@route(['PATCH'])
 def get_group(request):
     return callRespond(
         GroupReader.GroupReadService.read_group(request.data['group_id'])
     )
-

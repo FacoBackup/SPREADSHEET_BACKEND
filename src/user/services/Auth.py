@@ -1,4 +1,4 @@
-from src.user.services import UserRead
+from src.user.services import UserReader
 from ldap3 import Server, Connection, ALL
 import jwt
 import time as time_
@@ -6,7 +6,7 @@ from rest_framework import status
 
 
 def sign_in(user_email, password):
-    user = UserRead.UserReadService.read_user_by_email(user_email)
+    user = UserReader.UserReadService.read_user_by_email(user_email)
     if user is not None:
         # server = Server('ldap://ldap.aeb.gov.br', get_info=ALL)
         # connection = Connection(server, user=user.email, password=password)

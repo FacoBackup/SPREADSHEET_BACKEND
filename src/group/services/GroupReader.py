@@ -1,10 +1,20 @@
 from src.group.models import Group, GroupMembership
 from rest_framework import status
-from django.core import exceptions, serializers
+from django.core import exceptions
+from src.user.services import UserReader
 
 
 class GroupReadService:
-
+    @staticmethod
+    def read_group_members(group_id):
+        try:
+            members = GroupMembership.objects.filter(group_fk=group_id)
+            response = []
+            for i in members:
+                response.append(UserReader.UserReadService.map_user(i.user_fk, group_id=i.group_fk.id))
+            return response
+        except exceptions.ObjectDoesNotExist:
+            return []
 
     @staticmethod
     def verify_member(user_id, group_id):
@@ -48,41 +58,6 @@ class GroupReadService:
             group_query = Group.objects.get(id=group_id)
 
             return GroupReadService.__map_group(group_query)
-        except exceptions.ObjectDoesNotExist:
-            return status.HTTP_500_INTERNAL_SERVER_ERROR
-
-    @staticmethod
-    def read_groups_user(user_id):
-        try:
-            memberships = (
-                GroupMembership.objects.filter(user_fk=user_id).select_related()[:10]
-            )
-
-            groups = []
-
-            for i in memberships:
-                membership = GroupReadService.__map_membership(i)
-                group = Group.objects.get(id=membership['group_id'])
-                if group is not None:
-                    groups.append(GroupReadService.__map_group(group))
-
-            return groups
-        except exceptions.ObjectDoesNotExist:
-            return status.HTTP_500_INTERNAL_SERVER_ERROR
-
-    @staticmethod
-    def read_groups_user_max_id(user_id, max_id):
-        try:
-            group_query = (
-                GroupMembership.objects.filter(user_fk=user_id, group_fk__lt=max_id).select_related()[:10]
-            )
-
-            response = []
-            for i in group_query:
-                response.append(GroupReadService.__map_membership(i))
-
-            return response
-
         except exceptions.ObjectDoesNotExist:
             return status.HTTP_500_INTERNAL_SERVER_ERROR
 
