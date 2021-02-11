@@ -8,6 +8,41 @@ from django.http import HttpResponse
 import time
 
 
+@route(['DELETE'])
+def delete_cell(request):
+    token = request.META.get('HTTP_AUTHORIZATION')
+    if token is not None:
+        decoded_token = jwt.decode(token, key="askdasdiuh123i1y98yejas9d812hiu89dqw9", algorithms="HS256")
+        if decoded_token['exp'] > time.time():
+            data = RepositoryFactory.RepositoryFactory.delete_cell(cell_id=request.data['cell_id'])
+            if data is not None:
+                return HttpResponse(data)
+            else:
+                return HttpResponse(status=status.HTTP_404_NOT_FOUND)
+        else:
+            return HttpResponse(status=status.HTTP_401_UNAUTHORIZED)
+    else:
+        return HttpResponse(status=status.HTTP_401_UNAUTHORIZED)
+
+
+@route(['PUT'])
+def update_column(request):
+    token = request.META.get('HTTP_AUTHORIZATION')
+    if token is not None:
+        decoded_token = jwt.decode(token, key="askdasdiuh123i1y98yejas9d812hiu89dqw9", algorithms="HS256")
+        if decoded_token['exp'] > time.time():
+            data = RepositoryFactory.RepositoryFactory.update_column(column_id=request.data['column_id'],
+                                                                     name=request.data['name'])
+            if data is not None:
+                return HttpResponse(data)
+            else:
+                return HttpResponse(status=status.HTTP_404_NOT_FOUND)
+        else:
+            return HttpResponse(status=status.HTTP_401_UNAUTHORIZED)
+    else:
+        return HttpResponse(status=status.HTTP_401_UNAUTHORIZED)
+
+
 @route(['PATCH'])
 def read_repository(request):
     token = request.META.get('HTTP_AUTHORIZATION')
@@ -158,7 +193,7 @@ def create_branch(request):
                 status=RepositoryFactory.
                     RepositoryFactory.
                     create_branch(name=request.data['name'],
-                                  repository_id=request.data['repository_id'],
+                                  target_branch_id=request.data['target_branch_id'],
                                   requester=decoded_token['user_id'], about=request.data['about'])
             )
         else:

@@ -10,6 +10,40 @@ import time
 
 class RepositoryFactory:
     @staticmethod
+    def delete_cell(cell_id):
+        try:
+            cell = Cell.objects.get(id=cell_id)
+            if cell is not None:
+                cell.delete()
+                return status.HTTP_200_OK
+            else:
+                return status.HTTP_424_FAILED_DEPENDENCY
+        except exceptions.FieldError:
+            return status.HTTP_500_INTERNAL_SERVER_ERROR
+        except exceptions.PermissionDenied:
+            return status.HTTP_500_INTERNAL_SERVER_ERROR
+        except exceptions.ObjectDoesNotExist:
+            return status.HTTP_500_INTERNAL_SERVER_ERROR
+
+
+    @staticmethod
+    def update_column(column_id, name):
+        try:
+            column = Column.objects.get(id=column_id)
+            if column is not None:
+                column.name = name
+                column.save()
+                return status.HTTP_200_OK
+            else:
+                return status.HTTP_424_FAILED_DEPENDENCY
+        except exceptions.FieldError:
+            return status.HTTP_500_INTERNAL_SERVER_ERROR
+        except exceptions.PermissionDenied:
+            return status.HTTP_500_INTERNAL_SERVER_ERROR
+        except exceptions.ObjectDoesNotExist:
+            return status.HTTP_500_INTERNAL_SERVER_ERROR
+
+    @staticmethod
     def create_repository(requester, name, about, group_id):
         try:
             group = Group.objects.get(id=group_id)
@@ -55,35 +89,38 @@ class RepositoryFactory:
             return status.HTTP_401_UNAUTHORIZED
 
     @staticmethod
-    def create_branch(repository_id, requester, name, about):
+    def create_branch(target_branch_id, requester, name, about):
         try:
-            master = Branch.objects.get(repository_fk=repository_id, is_master=True)
-            columns = FormRead.FormReadService.read_columns(branch_id=master.id)
-            cells = FormRead.FormReadService.read_all_cells_from_branch(branch_id=master.id)
-            new_column_relations = []
+            target_branch = Branch.objects.get(repository_fk=target_branch_id)
+            if target_branch is not None:
+                columns = FormRead.FormReadService.read_columns(branch_id=target_branch.id)
+                cells = FormRead.FormReadService.read_all_cells_from_branch(branch_id=target_branch.id)
+                new_column_relations = []
 
-            new_branch = Branch(repository_fk=repository_id, name=name, about=about, is_master=False)
-            new_branch.save()
+                new_branch = Branch(repository_fk=target_branch.repository_fk, name=name, about=about, is_master=False)
+                new_branch.save()
 
-            new_contributor = Contributor(user_fk=requester, branch_fk=new_branch)
-            new_contributor.save()
+                new_contributor = Contributor(user_fk=User.objects.get(id=requester), branch_fk=new_branch)
+                new_contributor.save()
 
-            for i in columns:
-                new_column = Column(name=i['name'], branch_fk=new_branch.id)
-                new_column.save()
-                new_column_relations.append({
-                    "origin_column": i["id"],
-                    "new_column": new_column.id
-                })
+                for i in columns:
+                    new_column = Column(name=i['name'], branch_fk=new_branch)
+                    new_column.save()
+                    new_column_relations.append({
+                        "origin_column": i["id"],
+                        "new_column": new_column.id
+                    })
 
-            for j in cells:
-                new_column_id = RepositoryFactory.__filter_new_column_id(old_id=j['column_id'],
-                                                                         column_relations=new_column_relations)
-                if new_column_id is not None:
-                    new_cell = Cell(content=j['content'], column_fk=new_column_id)
-                    new_cell.save()
+                for j in cells:
+                    new_column_id = RepositoryFactory.__filter_new_column_id(old_id=j['column_id'],
+                                                                             column_relations=new_column_relations)
+                    if new_column_id is not None:
+                        new_cell = Cell(content=j['content'], column_fk=new_column_id)
+                        new_cell.save()
 
-            return status.HTTP_201_CREATED
+                return status.HTTP_201_CREATED
+            else:
+                return status.HTTP_417_EXPECTATION_FAILED
         except exceptions.FieldError:
             return status.HTTP_500_INTERNAL_SERVER_ERROR
         except exceptions.PermissionDenied:

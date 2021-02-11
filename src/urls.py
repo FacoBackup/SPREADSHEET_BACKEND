@@ -67,9 +67,11 @@ urlpatterns = [
     #TODO
     path('api/export', file_management_views.export_formatted_json, name='export_formatted_json'),
     #OK
+    path('api/branch/update/column', file_management_views.update_column, name="update_column"),
     path('api/branch/column', file_management_views.create_column, name="create_column"),
     #OK
     path('api/branch/cell', file_management_views.create_cell, name="create_cell"),
+    path('api/branch/delete/cell', file_management_views.delete_cell, name="delete_cell"),
     #OK
     path('api/branch/update/cell', file_management_views.update_cell, name="update_cell"),
     #OK
