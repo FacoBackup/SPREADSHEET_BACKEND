@@ -7,6 +7,17 @@ from src.group.services.GroupReader import GroupReadService
 
 class RepositoryReadService:
     @staticmethod
+    def read_branch(branch_id):
+        try:
+            branch = Branch.objects.get(id=branch_id)
+            if branch is not None:
+                return RepositoryReadService.__map_contributor_branch(branch)
+            else:
+                return None
+        except exceptions.ObjectDoesNotExist:
+            return None
+
+    @staticmethod
     def read_repository(repository_id):
         try:
             repository = Repository.objects.get(id=repository_id)
@@ -54,8 +65,7 @@ class RepositoryReadService:
 
             for i in contributor_in:
                 repo = Repository.objects.get(id=i.branch_fk.repository_fk)
-                branch = RepositoryReadService.__map_contributor_branch(Branch.objects.get(id=i.branch_fk.id),
-                                                                        repository_name=repo.name)
+                branch = RepositoryReadService.__map_contributor_branch(Branch.objects.get(id=i.branch_fk.id))
 
                 if branch is not None:
                     branches.append(branch)
@@ -75,7 +85,7 @@ class RepositoryReadService:
             for i in contributor_in:
                 repo = Repository.objects.get(id=i.branch_fk.repository_fk)
                 branch = RepositoryReadService. \
-                    __map_contributor_branch(Branch.objects.get(id=i.branch_fk.id), repository_name=repo.name)
+                    __map_contributor_branch(Branch.objects.get(id=i.branch_fk.id))
                 if branch is not None:
                     branches.append(branch)
             return branches
@@ -85,7 +95,7 @@ class RepositoryReadService:
     @staticmethod
     def read_latest_commits(user_id):
         try:
-            commits = Commit.objects.filter(user_fk=user_id).order_by('-commit_time')[:2]
+            commits = Commit.objects.filter(user_fk=user_id, closed=True).order_by('-commit_time')[:2]
             response = []
             for i in commits:
                 response.append(RepositoryReadService.__map_commit(i))
@@ -112,7 +122,7 @@ class RepositoryReadService:
             branches = Branch.objects.filter(repository_fk=repository_id)
             response = []
             for i in branches:
-                response.append(RepositoryReadService.__map_repository(i))
+                response.append(RepositoryReadService.__map_contributor_branch(i))
 
             return response
         except exceptions.ObjectDoesNotExist:
@@ -131,23 +141,14 @@ class RepositoryReadService:
             return status.HTTP_500_INTERNAL_SERVER_ERROR
 
     @staticmethod
-    def __map_contributor_branch(branch, repository_name):
+    def __map_contributor_branch(branch):
         return {
             "id": branch.id,
             "name": branch.name,
             "repository_id": branch.repository_fk.id,
             "is_master": branch.is_master,
-            'repository_name': repository_name,
+            'repository_name': branch.repository_fk.name,
 
-        }
-
-    @staticmethod
-    def __map_branch(branch):
-        return {
-            "id": branch.id,
-            "name": branch.name,
-            "repository_id": branch.repository_fk.id,
-            "is_master": branch.is_master
         }
 
     @staticmethod
@@ -166,6 +167,6 @@ class RepositoryReadService:
             "changes": commit.changes,
             "branch_id": commit.branch_fk.id,
             "commit_time": commit.commit_time,
-            "message": commit.message,
-            'branch_name': commit.branch_fk.name
+            'branch_name': commit.branch_fk.name,
+            'repository_id': commit.branch_fk.repository_fk.id
         }

@@ -25,14 +25,20 @@ class RepositoryFactory:
         except exceptions.ObjectDoesNotExist:
             return status.HTTP_500_INTERNAL_SERVER_ERROR
 
-
     @staticmethod
-    def update_column(column_id, name):
+    def update_column(column_id, user_id, name):
         try:
             column = Column.objects.get(id=column_id)
             if column is not None:
                 column.name = name
                 column.save()
+                open_commit = Commit.objects.get(closed=False,
+                                                 user_fk=user_id,
+                                                 branch_fk=column.branch_fk.id)
+                if open_commit is not None:
+                    open_commit.changes += 1
+                    open_commit.commit_time = time.time()
+                    open_commit.save()
                 return status.HTTP_200_OK
             else:
                 return status.HTTP_424_FAILED_DEPENDENCY
@@ -145,7 +151,8 @@ class RepositoryFactory:
 
                         for i in columns:
                             cells = FormReader.FormReadService.read_column_cells(column_id=i['id'])
-                            column_id = FormFactory.FormFactory.create_column(name=i['name'], branch_id=target_branch.id)
+                            column_id = FormFactory.FormFactory.create_column(name=i['name'],
+                                                                              branch_id=target_branch.id)
 
                             if column_id is not None:
                                 for j in cells:
@@ -167,12 +174,19 @@ class RepositoryFactory:
             return status.HTTP_500_INTERNAL_SERVER_ERROR
 
     @staticmethod
-    def update_cell(cell_id, content):
+    def update_cell(cell_id, user_id, content):
         try:
             cell = Cell.objects.get(id=cell_id)
             if cell is not None:
                 cell.content = content
                 cell.save()
+                open_commit = Commit.objects.get(closed=False,
+                                                 user_fk=user_id,
+                                                 branch_fk=cell.column_fk.branch_fk.id)
+                if open_commit is not None:
+                    open_commit.changes += 1
+                    open_commit.commit_time = time.time()
+                    open_commit.save()
                 return status.HTTP_200_OK
         except exceptions.FieldError:
             return status.HTTP_500_INTERNAL_SERVER_ERROR
@@ -180,20 +194,43 @@ class RepositoryFactory:
             return status.HTTP_500_INTERNAL_SERVER_ERROR
 
     @staticmethod
-    def create_commit(changes, branch_id, message, user_id):
+    def commit(branch_id, user_id):
         try:
-            commit = Commit(message=message,
-                            changes=changes,
-                            branch_fk=Branch.objects.get(id=branch_id),
-                            commit_time=time.time(),
-                            user_fk=User.objects.get(id=user_id)
-                            )
-            commit.save()
+            last_commit = Commit.objects.get(closed=False,
+                                             user_fk=user_id,
+                                             branch_fk=int(branch_id))
+            if last_commit is not None and last_commit.changes > 0:
+                last_commit.closed = True
+                last_commit.save()
+
+                new_commit = Commit(changes=0,
+                                    branch_fk=Branch.objects.get(id=branch_id),
+                                    commit_time=time.time(),
+                                    user_fk=User.objects.get(id=user_id),
+                                    closed=False
+                                    )
+
+                new_commit.save()
+
+                return status.HTTP_201_CREATED
+            else:
+                return status.HTTP_424_FAILED_DEPENDENCY
+
+        except exceptions.ObjectDoesNotExist:
+            new_commit = Commit(changes=0,
+                                branch_fk=Branch.objects.get(id=branch_id),
+                                commit_time=time.time(),
+                                user_fk=User.objects.get(id=user_id),
+                                closed=False
+                                )
+            new_commit.save()
+
             return status.HTTP_201_CREATED
         except exceptions.FieldError:
             return status.HTTP_500_INTERNAL_SERVER_ERROR
         except exceptions.PermissionDenied:
             return status.HTTP_500_INTERNAL_SERVER_ERROR
+
 
     @staticmethod
     def __filter_new_column_id(old_id, column_relations):

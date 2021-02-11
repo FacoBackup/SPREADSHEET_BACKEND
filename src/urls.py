@@ -26,7 +26,8 @@ urlpatterns = [
     # GROUP
 
     # REPOSITORY
-    path('api/get/repository', file_management_views.read_repository, name="read_repository"),
+    path('api/get/branch', file_management_views.read_branch, name="read_branch"),
+    path('api/get/repository', file_management_views.get_repository, name="read_repository"),
     path('api/get/repository/branches', file_management_views.read_repository_branches, name="read_repository_branches"),
     path('api/member/by/branch', file_management_views.verify_member_by_branch, name="verify_member_by_branch"),
     path('api/make/commit', file_management_views.make_commit, name='make_commit'),

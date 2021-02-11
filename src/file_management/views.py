@@ -32,7 +32,8 @@ def update_column(request):
         decoded_token = jwt.decode(token, key="askdasdiuh123i1y98yejas9d812hiu89dqw9", algorithms="HS256")
         if decoded_token['exp'] > time.time():
             data = RepositoryFactory.RepositoryFactory.update_column(column_id=request.data['column_id'],
-                                                                     name=request.data['name'])
+                                                                     name=request.data['name'],
+                                                                     user_id=decoded_token['user_id'])
             if data is not None:
                 return HttpResponse(data)
             else:
@@ -44,14 +45,14 @@ def update_column(request):
 
 
 @route(['PATCH'])
-def read_repository(request):
+def get_repository(request):
     token = request.META.get('HTTP_AUTHORIZATION')
     if token is not None:
         decoded_token = jwt.decode(token, key="askdasdiuh123i1y98yejas9d812hiu89dqw9", algorithms="HS256")
         if decoded_token['exp'] > time.time():
             data = RepositoryReader.RepositoryReadService.read_repository(repository_id=request.data['repository_id'])
             if data is not None:
-                return HttpResponse(data)
+                return callRespond(data)
             else:
                 return HttpResponse(status=status.HTTP_404_NOT_FOUND)
         else:
@@ -67,11 +68,10 @@ def make_commit(request):
         decoded_token = jwt.decode(token, key="askdasdiuh123i1y98yejas9d812hiu89dqw9", algorithms="HS256")
         if decoded_token['exp'] > time.time():
             return HttpResponse(
-                status=RepositoryFactory.RepositoryFactory.create_commit(
+                status=RepositoryFactory.RepositoryFactory.commit(
                     branch_id=request.data['branch_id'],
-                    message=request.data['message'],
                     user_id=decoded_token['user_id'],
-                    changes=request.data['changes'])
+                )
             )
         else:
             return HttpResponse(status=status.HTTP_401_UNAUTHORIZED)
@@ -94,6 +94,16 @@ def read_latest_commits(request):
     return callRespond(
         response
     )
+
+
+@route(['PATCH'])
+def read_branch(request):
+    data = RepositoryReader.RepositoryReadService.read_branch(branch_id=request.data['branch_id'])
+
+    if data is not None:
+        return callRespond(data)
+    else:
+        return HttpResponse(status=404)
 
 
 @route(['PUT'])
@@ -210,7 +220,8 @@ def update_cell(request):
         if decoded_token['exp'] > time.time():
             return callRespond(
                 status=RepositoryFactory.RepositoryFactory.update_cell(content=request.data['content'],
-                                                                       cell_id=request.data['cell_id'])
+                                                                       cell_id=request.data['cell_id'],
+                                                                       user_id=decoded_token['user_id'])
             )
         else:
             return HttpResponse(status=status.HTTP_401_UNAUTHORIZED)
@@ -276,14 +287,8 @@ def create_column(request):
     if token is not None:
         decoded_token = jwt.decode(token, key="askdasdiuh123i1y98yejas9d812hiu89dqw9", algorithms="HS256")
         if decoded_token['exp'] > time.time():
-            response = FormFactory.FormFactory.create_column(name=request.data['name'],
-                                                             branch_id=request.data['branch_id'])
-            if response is not None:
-                return callRespond(
-                    status=status.HTTP_201_CREATED
-                )
-            else:
-                return HttpResponse(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            return HttpResponse(status=FormFactory.FormFactory.create_column(name=request.data['name'],
+                                                                             branch_id=request.data['branch_id']))
         else:
             return HttpResponse(status=status.HTTP_401_UNAUTHORIZED)
     else:
@@ -307,7 +312,8 @@ def create_cell(request):
             return callRespond(
                 status=FormFactory.FormFactory.create_cell(content=request.data['content'],
                                                            row=request.data['row'],
-                                                           column_id=request.data['column_id'])
+                                                           column_id=request.data['column_id'],
+                                                           user_id=decoded_token['user_id'])
             )
         else:
             return HttpResponse(status=status.HTTP_401_UNAUTHORIZED)
