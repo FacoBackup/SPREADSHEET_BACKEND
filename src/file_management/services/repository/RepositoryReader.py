@@ -1,8 +1,8 @@
 from src.file_management.models import Branch, Commit, Repository, Contributor
 from django.core import exceptions, serializers
 from rest_framework import status
-from src.user.services.UserReader import UserReadService
-from src.group.services.GroupReader import GroupReadService
+from src.user.services import UserReader
+from src.group.services import GroupReader
 
 
 class RepositoryReadService:
@@ -33,7 +33,8 @@ class RepositoryReadService:
         try:
             branch = Branch.objects.get(id=branch_id)
             if branch is not None:
-                membership = GroupReadService.verify_member(user_id=user_id, group_id=branch.repository_fk.group_fk.id)
+                membership = GroupReader.GroupReadService.verify_member(user_id=user_id,
+                                                                        group_id=branch.repository_fk.group_fk.id)
                 if membership is not None:
                     return True
                 else:
@@ -47,7 +48,7 @@ class RepositoryReadService:
             contributors = Contributor.objects.filter(branch_fk=branch_id)
             response = []
             for i in contributors:
-                user = UserReadService.read_user_by_id(user_id=i.user_fk.id)
+                user = UserReader.UserReadService.read_user_by_id(user_id=i.user_fk.id)
                 response.append(user)
 
             return response
@@ -58,13 +59,12 @@ class RepositoryReadService:
     def read_branches_user_by_max_id(user_id, max_id):
         try:
             contributor_in = (Contributor
-                                  .objects
-                                  .filter(user_fk=user_id, branch_fk__lt=max_id)
-                                  .order_by('-branch_fk')[:10])
+                              .objects
+                              .filter(user_fk=user_id, branch_fk__lt=max_id)
+                              .order_by('-branch_fk')[:10])
             branches = []
 
             for i in contributor_in:
-                repo = Repository.objects.get(id=i.branch_fk.repository_fk)
                 branch = RepositoryReadService.__map_contributor_branch(Branch.objects.get(id=i.branch_fk.id))
 
                 if branch is not None:
@@ -77,9 +77,9 @@ class RepositoryReadService:
     def read_branches_user(user_id):
         try:
             contributor_in = (Contributor
-                                  .objects
-                                  .filter(user_fk=user_id)
-                                  .order_by('-branch_fk')[:10])
+                              .objects
+                              .filter(user_fk=user_id)
+                              .order_by('-branch_fk')[:10])
             branches = []
 
             for i in contributor_in:
@@ -110,7 +110,16 @@ class RepositoryReadService:
             repositories = Repository.objects.filter(group_fk=group_id)
             response = []
             for i in repositories:
-                response.append(RepositoryReadService.__map_repository(i))
+                master = Branch.objects.get(repository_fk=i.id, is_master=True)
+                branches = Branch.objects.filter(repository_fk=i.id).count()
+                if master is not None:
+                    response.append(
+                        {
+                            "repository": RepositoryReadService.__map_repository(i),
+                            "master_branch_id": master.id,
+                            "branches": branches
+                        }
+                    )
 
             return response
         except exceptions.ObjectDoesNotExist:

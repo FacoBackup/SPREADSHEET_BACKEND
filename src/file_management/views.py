@@ -257,8 +257,8 @@ def read_repository_branches(request):
         if decoded_token['exp'] > time.time():
             return callRespond(
                 RepositoryReader.
-                    RepositoryReadService.
-                    read_repository_branches(repository_id=request.data['repository_id'])
+                RepositoryReadService.
+                read_repository_branches(repository_id=request.data['repository_id'])
             )
         else:
             return HttpResponse(status=status.HTTP_401_UNAUTHORIZED)

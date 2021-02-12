@@ -2,6 +2,7 @@ from src.group.models import Group, GroupMembership
 from rest_framework import status
 from django.core import exceptions
 from src.user.services import UserReader
+from src.file_management.services.repository import RepositoryReader
 
 
 class GroupReadService:
@@ -56,10 +57,19 @@ class GroupReadService:
     def read_group(group_id):
         try:
             group_query = Group.objects.get(id=group_id)
-
-            return GroupReadService.__map_group(group_query)
+            if group_query is not None:
+                members = len(GroupReadService.read_group_members(group_id=group_query.id))
+                repositories = len(
+                    RepositoryReader.RepositoryReadService.read_group_repositories(group_id=group_query.id))
+                return {
+                    "group": GroupReadService.__map_group(group_query),
+                    "repositories": repositories,
+                    "members": members
+                }
+            else:
+                return None
         except exceptions.ObjectDoesNotExist:
-            return status.HTTP_500_INTERNAL_SERVER_ERROR
+            return None
 
     @staticmethod
     def __map_membership(membership):
