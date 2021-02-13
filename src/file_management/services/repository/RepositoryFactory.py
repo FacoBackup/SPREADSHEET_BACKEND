@@ -4,18 +4,20 @@ from src.file_management.models import Repository, Branch, Commit, Column, Cell,
 from src.user.models import User
 from src.group.models import Group
 from src.file_management.services.form import FormFactory, FormReader
-from src.group.services import GroupManagement, GroupReader
-import time
+from src.group.services import GroupReader
+import datetime
 
 
 class RepositoryFactory:
     @staticmethod
-    def delete_cell(cell_id):
+    def delete_cell(cell_id, user_id):
         try:
             cell = Cell.objects.get(id=cell_id)
             if cell is not None:
+                RepositoryFactory.__set_commit(user_id=user_id, branch_id=cell.column_fk.branch_fk.id)
                 cell.delete()
                 return status.HTTP_200_OK
+
             else:
                 return status.HTTP_424_FAILED_DEPENDENCY
         except exceptions.FieldError:
@@ -32,13 +34,7 @@ class RepositoryFactory:
             if column is not None:
                 column.name = name
                 column.save()
-                open_commit = Commit.objects.get(closed=False,
-                                                 user_fk=user_id,
-                                                 branch_fk=column.branch_fk.id)
-                if open_commit is not None:
-                    open_commit.changes += 1
-                    open_commit.commit_time = time.time()
-                    open_commit.save()
+                RepositoryFactory.__set_commit(user_id=user_id, branch_id=column.branch_fk.id)
                 return status.HTTP_200_OK
             else:
                 return status.HTTP_424_FAILED_DEPENDENCY
@@ -157,7 +153,7 @@ class RepositoryFactory:
                             if column_id is not None:
                                 for j in cells:
                                     FormFactory.FormFactory.create_cell(column_id=column_id, content=j['content'],
-                                                                        requester=requester)
+                                                                        user_id=requester, row=j.row)
 
                         return status.HTTP_200_OK
                     else:
@@ -180,18 +176,29 @@ class RepositoryFactory:
             if cell is not None:
                 cell.content = content
                 cell.save()
-                open_commit = Commit.objects.get(closed=False,
-                                                 user_fk=user_id,
-                                                 branch_fk=cell.column_fk.branch_fk.id)
-                if open_commit is not None:
-                    open_commit.changes += 1
-                    open_commit.commit_time = time.time()
-                    open_commit.save()
+                RepositoryFactory.__set_commit(user_id=user_id, branch_id=cell.column_fk.branch_fk.id)
                 return status.HTTP_200_OK
         except exceptions.FieldError:
             return status.HTTP_500_INTERNAL_SERVER_ERROR
         except exceptions.PermissionDenied:
             return status.HTTP_500_INTERNAL_SERVER_ERROR
+
+    @staticmethod
+    def __set_commit(user_id, branch_id):
+        open_commit = Commit.objects.get(closed=False,
+                                         user_fk=user_id,
+                                         branch_fk=branch_id)
+        if open_commit is not None:
+            open_commit.changes += 1
+            open_commit.commit_time = datetime.datetime.now().timestamp() * 1000
+            open_commit.save()
+        else:
+            new_commit = Commit(closed=False,
+                                user_fk=User.objects.get(id=user_id),
+                                branch_fk=Branch.objects.get(id=branch_id),
+                                changes=1
+                                )
+            new_commit.save()
 
     @staticmethod
     def commit(branch_id, user_id):
@@ -205,7 +212,7 @@ class RepositoryFactory:
 
                 new_commit = Commit(changes=0,
                                     branch_fk=Branch.objects.get(id=branch_id),
-                                    commit_time=time.time(),
+                                    commit_time=datetime.datetime.now().timestamp() * 1000,
                                     user_fk=User.objects.get(id=user_id),
                                     closed=False
                                     )
@@ -219,7 +226,7 @@ class RepositoryFactory:
         except exceptions.ObjectDoesNotExist:
             new_commit = Commit(changes=0,
                                 branch_fk=Branch.objects.get(id=branch_id),
-                                commit_time=time.time(),
+                                commit_time=datetime.datetime.now().timestamp() * 1000,
                                 user_fk=User.objects.get(id=user_id),
                                 closed=False
                                 )
@@ -230,7 +237,6 @@ class RepositoryFactory:
             return status.HTTP_500_INTERNAL_SERVER_ERROR
         except exceptions.PermissionDenied:
             return status.HTTP_500_INTERNAL_SERVER_ERROR
-
 
     @staticmethod
     def __filter_new_column_id(old_id, column_relations):

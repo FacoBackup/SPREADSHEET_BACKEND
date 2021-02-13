@@ -140,7 +140,7 @@ class RepositoryReadService:
     @staticmethod
     def read_branch_commits(branch_id):
         try:
-            commits = Commit.objects.filter(branch_fk=branch_id)
+            commits = Commit.objects.filter(branch_fk=branch_id, changes__gt=0).order_by('-commit_time')
             response = []
             for i in commits:
                 response.append(RepositoryReadService.__map_commit(i))
@@ -177,5 +177,6 @@ class RepositoryReadService:
             "branch_id": commit.branch_fk.id,
             "commit_time": commit.commit_time,
             'branch_name': commit.branch_fk.name,
+            "user_name": commit.user_fk.name,
             'repository_id': commit.branch_fk.repository_fk.id
         }

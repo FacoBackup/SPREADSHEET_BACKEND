@@ -14,7 +14,8 @@ def delete_cell(request):
     if token is not None:
         decoded_token = jwt.decode(token, key="askdasdiuh123i1y98yejas9d812hiu89dqw9", algorithms="HS256")
         if decoded_token['exp'] > time.time():
-            data = RepositoryFactory.RepositoryFactory.delete_cell(cell_id=request.data['cell_id'])
+            data = RepositoryFactory.RepositoryFactory.delete_cell(cell_id=request.data['cell_id'],
+                                                                   user_id=decoded_token['user_id'])
             if data is not None:
                 return HttpResponse(data)
             else:
