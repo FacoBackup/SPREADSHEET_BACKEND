@@ -41,8 +41,8 @@ urlpatterns = [
     path('api/branch', file_management_views.create_branch, name="create_branch"),
     path('api/merge', file_management_views.merge_branches, name="merge_branches"),
     path('api/get/group/repositories', file_management_views.read_group_repositories, name="read_group_repositories"),
-    #TODO FONTEND
     path('api/get/branch/commits', file_management_views.read_branch_commits, name="read_branch_commits"),
+    path('api/get/open/commit', file_management_views.verify_open_commit, name="verify_open_commit"),
     # REPOSITORY
 
     # FORM

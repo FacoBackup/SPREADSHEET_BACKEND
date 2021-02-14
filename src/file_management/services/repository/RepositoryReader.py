@@ -7,6 +7,26 @@ from src.group.services import GroupReader
 
 class RepositoryReadService:
     @staticmethod
+    def verify_open_commit(branch_id):
+        try:
+            commit = Commit.objects.get(branch_fk=branch_id, changes__gt=0, closed=False)
+            if commit is not None:
+                return {
+                    "open_commit": True,
+                    "user_id": commit.user_fk.id,
+                    "user_email": commit.user_fk.email,
+                    "user_name": commit.user_fk.name
+                }
+            else:
+                return {
+                    "open_commit": False
+                }
+        except exceptions.ObjectDoesNotExist:
+            return {
+                "open_commit": False
+            }
+
+    @staticmethod
     def read_branch(branch_id):
         try:
             branch = Branch.objects.get(id=branch_id)
@@ -59,9 +79,9 @@ class RepositoryReadService:
     def read_branches_user_by_max_id(user_id, max_id):
         try:
             contributor_in = (Contributor
-                              .objects
-                              .filter(user_fk=user_id, branch_fk__lt=max_id)
-                              .order_by('-branch_fk')[:10])
+                                  .objects
+                                  .filter(user_fk=user_id, branch_fk__lt=max_id)
+                                  .order_by('-branch_fk')[:10])
             branches = []
 
             for i in contributor_in:
@@ -77,9 +97,9 @@ class RepositoryReadService:
     def read_branches_user(user_id):
         try:
             contributor_in = (Contributor
-                              .objects
-                              .filter(user_fk=user_id)
-                              .order_by('-branch_fk')[:10])
+                                  .objects
+                                  .filter(user_fk=user_id)
+                                  .order_by('-branch_fk')[:10])
             branches = []
 
             for i in contributor_in:

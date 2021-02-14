@@ -3,6 +3,8 @@ from django.core import exceptions
 from src.file_management.models import Branch, Column, Cell
 import time
 from src.file_management.models import Commit
+from src.file_management.services.form import FormReader
+from src.file_management.services.repository import RepositoryFactory
 
 
 class FormFactory:
@@ -26,15 +28,10 @@ class FormFactory:
             if column is not None:
                 cell = Cell(content=content, column_fk=column, row=row)
                 cell.save()
-                open_commit = Commit.objects.get(closed=False,
-                                                 user_fk=user_id,
-                                                 branch_fk=column.branch_fk.id)
-                if open_commit is not None:
-                    open_commit.changes += 1
-                    open_commit.commit_time = time.time()
-                    open_commit.save()
-            return status.HTTP_201_CREATED
+
+                RepositoryFactory.RepositoryFactory.set_commit(user_id=user_id, branch_id=column.branch_fk.id)
+            return FormReader.FormReadService.map_cell(cell)
         except exceptions.FieldError:
-            return status.HTTP_500_INTERNAL_SERVER_ERROR
+            return None
         except exceptions.PermissionDenied:
-            return status.HTTP_500_INTERNAL_SERVER_ERROR
+            return None

@@ -200,13 +200,17 @@ def create_branch(request):
     if token is not None:
         decoded_token = jwt.decode(token, key="askdasdiuh123i1y98yejas9d812hiu89dqw9", algorithms="HS256")
         if decoded_token['exp'] > time.time():
-            return callRespond(
-                status=RepositoryFactory.
-                    RepositoryFactory.
-                    create_branch(name=request.data['name'],
-                                  target_branch_id=request.data['target_branch_id'],
-                                  requester=decoded_token['user_id'], about=request.data['about'])
-            )
+            response = (RepositoryFactory.
+                        RepositoryFactory.
+                        create_branch(name=request.data['name'],
+                                      target_branch_id=request.data['target_branch_id'],
+                                      requester=decoded_token['user_id']))
+            if response is None:
+                return callRespond(
+                    status=500
+                )
+            else:
+                return callRespond(response)
         else:
             return HttpResponse(status=status.HTTP_401_UNAUTHORIZED)
     else:
@@ -258,8 +262,8 @@ def read_repository_branches(request):
         if decoded_token['exp'] > time.time():
             return callRespond(
                 RepositoryReader.
-                RepositoryReadService.
-                read_repository_branches(repository_id=request.data['repository_id'])
+                    RepositoryReadService.
+                    read_repository_branches(repository_id=request.data['repository_id'])
             )
         else:
             return HttpResponse(status=status.HTTP_401_UNAUTHORIZED)
@@ -303,19 +307,36 @@ def read_branch_contributors(request):
     )
 
 
+@route(["PATCH"])
+def verify_open_commit(request):
+    token = request.META.get('HTTP_AUTHORIZATION')
+    if token is not None:
+        decoded_token = jwt.decode(token, key="askdasdiuh123i1y98yejas9d812hiu89dqw9", algorithms="HS256")
+        if decoded_token['exp'] > time.time():
+            return callRespond(RepositoryReader.RepositoryReadService.verify_open_commit(branch_id=request.data['branch_id']))
+        else:
+            return HttpResponse(status=status.HTTP_401_UNAUTHORIZED)
+    else:
+        return HttpResponse(status=status.HTTP_401_UNAUTHORIZED)
+
+
 @route(['POST'])
 def create_cell(request):
     token = request.META.get('HTTP_AUTHORIZATION')
     if token is not None:
         decoded_token = jwt.decode(token, key="askdasdiuh123i1y98yejas9d812hiu89dqw9", algorithms="HS256")
         if decoded_token['exp'] > time.time():
-
-            return callRespond(
-                status=FormFactory.FormFactory.create_cell(content=request.data['content'],
+            response = FormFactory.FormFactory.create_cell(content=request.data['content'],
                                                            row=request.data['row'],
                                                            column_id=request.data['column_id'],
                                                            user_id=decoded_token['user_id'])
-            )
+
+            if response is None:
+                return callRespond(
+                    status=500
+                )
+            else:
+                return callRespond(response)
         else:
             return HttpResponse(status=status.HTTP_401_UNAUTHORIZED)
     else:
@@ -339,6 +360,14 @@ def read_all_cells(request):
 
 @route(['PATCH'])
 def read_all_content_by_branch(request):
-    return callRespond(
-        FormReader.FormReadService.read_all_content_by_branch(branch_id=request.data['branch_id'])
-    )
+    token = request.META.get('HTTP_AUTHORIZATION')
+    if token is not None:
+        decoded_token = jwt.decode(token, key="askdasdiuh123i1y98yejas9d812hiu89dqw9", algorithms="HS256")
+        if decoded_token['exp'] > time.time():
+            return callRespond(
+                FormReader.FormReadService.read_all_content_by_branch(branch_id=request.data['branch_id'])
+            )
+        else:
+            return HttpResponse(status=status.HTTP_401_UNAUTHORIZED)
+    else:
+        return HttpResponse(status=status.HTTP_401_UNAUTHORIZED)

@@ -14,7 +14,7 @@ class RepositoryFactory:
         try:
             cell = Cell.objects.get(id=cell_id)
             if cell is not None:
-                RepositoryFactory.__set_commit(user_id=user_id, branch_id=cell.column_fk.branch_fk.id)
+                RepositoryFactory.set_commit(user_id=user_id, branch_id=cell.column_fk.branch_fk.id)
                 cell.delete()
                 return status.HTTP_200_OK
 
@@ -34,7 +34,7 @@ class RepositoryFactory:
             if column is not None:
                 column.name = name
                 column.save()
-                RepositoryFactory.__set_commit(user_id=user_id, branch_id=column.branch_fk.id)
+                RepositoryFactory.set_commit(user_id=user_id, branch_id=column.branch_fk.id)
                 return status.HTTP_200_OK
             else:
                 return status.HTTP_424_FAILED_DEPENDENCY
@@ -71,7 +71,7 @@ class RepositoryFactory:
     @staticmethod
     def add_contributor_branch(branch_id, user_id, requester):
         branch = Branch.objects.get(id=branch_id)
-        contributor = Contributor.object.get(user_fk=requester, branch_fk=branch_id)
+        contributor = Contributor.objects.get(user_fk=requester, branch_fk=branch_id)
         user = User.objects.get(id=user_id)
         if branch is not None and contributor is not None and user is not None:
             new_contributor = Contributor(user_fk=user, branch_fk=branch)
@@ -82,7 +82,7 @@ class RepositoryFactory:
 
     @staticmethod
     def remove_contributor_branch(branch_id, user_id, requester):
-        contributor = Contributor.object.get(user_fk=requester, branch_fk=branch_id)
+        contributor = Contributor.objects.get(user_fk=requester, branch_fk=branch_id)
         if contributor is not None:
             to_be_removed = Contributor.objects.get(user_fk=user_id, branch_fk=branch_id)
             to_be_removed.delete()
@@ -91,42 +91,34 @@ class RepositoryFactory:
             return status.HTTP_401_UNAUTHORIZED
 
     @staticmethod
-    def create_branch(target_branch_id, requester, name, about):
+    def create_branch(target_branch_id, requester, name):
         try:
-            target_branch = Branch.objects.get(repository_fk=target_branch_id)
+            target_branch = Branch.objects.get(id=target_branch_id)
             if target_branch is not None:
-                columns = FormReader.FormReadService.read_columns(branch_id=target_branch.id)
-                cells = FormReader.FormReadService.read_all_cells_from_branch(branch_id=target_branch.id)
-                new_column_relations = []
 
-                new_branch = Branch(repository_fk=target_branch.repository_fk, name=name, about=about, is_master=False)
+                new_branch = Branch(repository_fk=target_branch.repository_fk, name=name, is_master=False)
                 new_branch.save()
 
                 new_contributor = Contributor(user_fk=User.objects.get(id=requester), branch_fk=new_branch)
                 new_contributor.save()
 
-                for i in columns:
-                    new_column = Column(name=i['name'], branch_fk=new_branch)
-                    new_column.save()
-                    new_column_relations.append({
-                        "origin_column": i["id"],
-                        "new_column": new_column.id
-                    })
+                content = FormReader.FormReadService.read_all_content_by_branch(branch_id=target_branch.id)
 
-                for j in cells:
-                    new_column_id = RepositoryFactory.__filter_new_column_id(old_id=j['column_id'],
-                                                                             column_relations=new_column_relations)
-                    if new_column_id is not None:
-                        new_cell = Cell(content=j['content'], column_fk=new_column_id)
+                for i in content:
+                    new_column = Column(name=i['column_name'], branch_fk=new_branch)
+                    new_column.save()
+
+                    for j in i["cells"]:
+                        new_cell = Cell(content=j["content"], row=j['row'], column_fk=new_column)
                         new_cell.save()
 
-                return status.HTTP_201_CREATED
+                return new_branch.id
             else:
-                return status.HTTP_417_EXPECTATION_FAILED
+                return None
         except exceptions.FieldError:
-            return status.HTTP_500_INTERNAL_SERVER_ERROR
+            return None
         except exceptions.PermissionDenied:
-            return status.HTTP_500_INTERNAL_SERVER_ERROR
+            return None
 
     @staticmethod
     def merge(source_branch_id, requester):
@@ -176,7 +168,7 @@ class RepositoryFactory:
             if cell is not None:
                 cell.content = content
                 cell.save()
-                RepositoryFactory.__set_commit(user_id=user_id, branch_id=cell.column_fk.branch_fk.id)
+                RepositoryFactory.set_commit(user_id=user_id, branch_id=cell.column_fk.branch_fk.id)
                 return status.HTTP_200_OK
         except exceptions.FieldError:
             return status.HTTP_500_INTERNAL_SERVER_ERROR
@@ -184,21 +176,24 @@ class RepositoryFactory:
             return status.HTTP_500_INTERNAL_SERVER_ERROR
 
     @staticmethod
-    def __set_commit(user_id, branch_id):
-        open_commit = Commit.objects.get(closed=False,
-                                         user_fk=user_id,
-                                         branch_fk=branch_id)
-        if open_commit is not None:
+    def set_commit(user_id, branch_id):
+        try:
+            open_commit = Commit.objects.get(closed=False,
+                                             user_fk=user_id,
+                                             branch_fk=branch_id)
+
             open_commit.changes += 1
             open_commit.commit_time = datetime.datetime.now().timestamp() * 1000
             open_commit.save()
-        else:
+        except exceptions.ObjectDoesNotExist:
             new_commit = Commit(closed=False,
                                 user_fk=User.objects.get(id=user_id),
                                 branch_fk=Branch.objects.get(id=branch_id),
-                                changes=1
+                                changes=1,
+                                commit_time= datetime.datetime.now().timestamp() * 1000
                                 )
             new_commit.save()
+
 
     @staticmethod
     def commit(branch_id, user_id):

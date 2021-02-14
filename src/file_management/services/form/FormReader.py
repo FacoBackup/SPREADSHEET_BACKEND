@@ -13,7 +13,7 @@ class FormReadService:
             content = Cell.objects.filter(field_fk=column_id)
             response = []
             for i in content:
-                response.append(FormReadService.__map_cell(i))
+                response.append(FormReadService.map_cell(i))
 
             return response
         except exceptions.ObjectDoesNotExist:
@@ -41,7 +41,7 @@ class FormReadService:
                 content = Cell.objects.filter(column_fk=i.id)
                 mapped_content = []
                 for j in content:
-                    mapped_content.append(FormReadService.__map_cell(j))
+                    mapped_content.append(FormReadService.map_cell(j))
 
                 response.append(mapped_content)
 
@@ -59,12 +59,11 @@ class FormReadService:
             max_row = Cell.objects.aggregate(Max('row'))['row__max']
             objects = []
             response = []
-            print("MAX ROW " + str(max_row))
 
             for i in range(max_row + 1):
                 row = []
                 row_cells = Cell.objects.filter(column_fk__branch_fk__id=branch_id, row=i)
-                print("CURRENT ROW " + str(i))
+
                 for j in row_cells:
                     row.append(FormReadService.__map_cell_json(j))
 
@@ -76,58 +75,18 @@ class FormReadService:
         except exceptions.ObjectDoesNotExist:
             return status.HTTP_500_INTERNAL_SERVER_ERROR
 
-    # [
-    #     {
-    #         "column_id": 1,
-    #         "column_name": "COLUMN 1",
-    #         "cells": [
-    #             {
-    #                 "cell_id": 1,
-    #                 "content": "algo"
-    #             },
-    #             {
-    #                 "cell_id": 2,
-    #                 "content": "algo dnv"
-    #             },
-    #             {
-    #                 "cell_id": 3,
-    #                 "content": "algo dnv dnv"
-    #             }
-    #         ]
-    #     },
-    #     {
-    #         "column_id": 2,
-    #         "column_name": "COLUMN 2",
-    #         "cells": [
-    #             {
-    #                 "cell_id": 4,
-    #                 "content": "algo"
-    #             },
-    #             {
-    #                 "cell_id": 5,
-    #                 "content": "algo dnv"
-    #             },
-    #             {
-    #                 "cell_id": 6,
-    #                 "content": "algo dnv dnv"
-    #             }
-    #         ]},
-    #     {},
-    #     {}
-    #
-    # ]
     @staticmethod
     def read_all_content_by_branch(branch_id):
         try:
             response = []
 
-            columns = Column.objects.filter(branch_fk=branch_id)
+            columns = Column.objects.filter(branch_fk=branch_id).order_by('id')
 
             for i in columns:
-                content = Cell.objects.filter(column_fk=i.id)
+                content = Cell.objects.filter(column_fk=i.id).order_by('id')
                 mapped_content = []
                 for j in content:
-                    mapped_content.append(FormReadService.__map_cell(j))
+                    mapped_content.append(FormReadService.map_cell(j))
 
                 response.append({
                     "column_id": i.id,
@@ -148,7 +107,7 @@ class FormReadService:
         }
 
     @staticmethod
-    def __map_cell(content):
+    def map_cell(content):
         return {
             "content": content.content,
             "id": content.id,
