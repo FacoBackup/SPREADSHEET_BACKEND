@@ -9,6 +9,7 @@ import datetime
 
 
 class RepositoryFactory:
+
     @staticmethod
     def delete_cell(cell_id, user_id):
         try:
@@ -124,36 +125,19 @@ class RepositoryFactory:
     def merge(source_branch_id, requester):
         try:
             source_branch = Branch.objects.get(id=source_branch_id)
-            if source_branch is not None:
-                target_branch = Branch.objects.get(is_master=True, repository_fk=source_branch.repository_fk.id)
-                if (target_branch is not None) and \
-                        (target_branch.repository_fk == source_branch.repository_fk):
-                    repository = Repository.objects.get(id=target_branch.repository_fk)
-                    member = None
-                    if repository is not None:
-                        member = GroupReader.GroupReadService.verify_member(user_id=requester,
-                                                                            group_id=repository.group_fk.id)
+            target_branch = Branch.objects.get(is_master=True, repository_fk=source_branch.repository_fk.id)
+            old_content = Column.objects.filter(branch_fk=target_branch)
+            old_content.delete()
+            content = FormReader.FormReadService.read_all_content_by_branch(branch_id=source_branch.id)
 
-                    if member is not None:
-                        columns = FormReader.FormReadService.read_columns(branch_id=source_branch_id)
+            for i in content:
+                new_column = Column(name=i['column_name'], branch_fk=target_branch)
+                new_column.save()
 
-                        for i in columns:
-                            cells = FormReader.FormReadService.read_column_cells(column_id=i['id'])
-                            column_id = FormFactory.FormFactory.create_column(name=i['name'],
-                                                                              branch_id=target_branch.id)
-
-                            if column_id is not None:
-                                for j in cells:
-                                    FormFactory.FormFactory.create_cell(column_id=column_id, content=j['content'],
-                                                                        user_id=requester, row=j.row)
-
-                        return status.HTTP_200_OK
-                    else:
-                        return status.HTTP_424_FAILED_DEPENDENCY
-                else:
-                    return status.HTTP_424_FAILED_DEPENDENCY
-            else:
-                return status.HTTP_417_EXPECTATION_FAILED
+                for j in i["cells"]:
+                    new_cell = Cell(content=j["content"], row=j['row'], column_fk=new_column)
+                    new_cell.save()
+            return status.HTTP_200_OK
         except exceptions.FieldError:
             return status.HTTP_500_INTERNAL_SERVER_ERROR
         except exceptions.PermissionDenied:
@@ -190,10 +174,9 @@ class RepositoryFactory:
                                 user_fk=User.objects.get(id=user_id),
                                 branch_fk=Branch.objects.get(id=branch_id),
                                 changes=1,
-                                commit_time= datetime.datetime.now().timestamp() * 1000
+                                commit_time=datetime.datetime.now().timestamp() * 1000
                                 )
             new_commit.save()
-
 
     @staticmethod
     def commit(branch_id, user_id):

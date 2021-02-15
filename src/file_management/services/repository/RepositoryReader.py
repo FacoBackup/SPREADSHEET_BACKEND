@@ -7,6 +7,49 @@ from src.group.services import GroupReader
 
 class RepositoryReadService:
     @staticmethod
+    def check_access(user_id, branch_id):
+        try:
+            access = Contributor.objects.get(user_fk=user_id, branch_fk=branch_id)
+            if access is not None:
+                return True
+            else:
+                return False
+        except exceptions.ObjectDoesNotExist:
+            return False
+
+    @staticmethod
+    def search_branch(search_input, reference_id, forward):
+        try:
+            response = []
+            if forward:
+                if reference_id is not None:
+                    branch = Branch.objects.filter(name__icontains=search_input, id__lt=reference_id).order_by("-id")[
+                             :3]
+
+                    for i in branch:
+                        response.append(RepositoryReadService.__map_contributor_branch(i))
+                else:
+                    branch = Branch.objects.filter(name__icontains=search_input).order_by("-id")[:3]
+
+                    for i in branch:
+                        response.append(RepositoryReadService.__map_contributor_branch(i))
+            else:
+                if reference_id is not None:
+                    branch = Branch.objects.filter(name__icontains=search_input, id__gt=reference_id).order_by("id")[:3]
+
+                    for i in branch:
+                        response.append(RepositoryReadService.__map_contributor_branch(i))
+                else:
+                    branch = Branch.objects.filter(name__icontains=search_input).order_by("id")[:3]
+
+                    for i in branch:
+                        response.append(RepositoryReadService.__map_contributor_branch(i))
+
+            return response
+        except exceptions.ObjectDoesNotExist:
+            return None
+
+    @staticmethod
     def verify_open_commit(branch_id):
         try:
             commit = Commit.objects.get(branch_fk=branch_id, changes__gt=0, closed=False)
@@ -115,7 +158,7 @@ class RepositoryReadService:
     @staticmethod
     def read_latest_commits(user_id):
         try:
-            commits = Commit.objects.filter(user_fk=user_id, closed=True).order_by('-commit_time')[:2]
+            commits = Commit.objects.filter(user_fk=user_id, closed=True).order_by('-commit_time')[:3]
             response = []
             for i in commits:
                 response.append(RepositoryReadService.__map_commit(i))
@@ -198,5 +241,6 @@ class RepositoryReadService:
             "commit_time": commit.commit_time,
             'branch_name': commit.branch_fk.name,
             "user_name": commit.user_fk.name,
+            "repository_name": commit.branch_fk.repository_fk.name,
             'repository_id': commit.branch_fk.repository_fk.id
         }

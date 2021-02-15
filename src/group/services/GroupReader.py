@@ -7,6 +7,15 @@ from src.file_management.services.repository import RepositoryReader
 
 class GroupReadService:
     @staticmethod
+    def read_group_by_name(name):
+        try:
+
+            return Group.objects.filter(name__icontains=name)[:2]
+
+        except exceptions.ObjectDoesNotExist:
+            return None
+
+    @staticmethod
     def read_group_members(group_id):
         try:
             members = GroupMembership.objects.filter(group_fk=group_id)
@@ -41,17 +50,40 @@ class GroupReadService:
             return None
 
     @staticmethod
-    def search_group(search_input):
+    def search_group(search_input, forward, reference_id):
         try:
-            tag = (search_input.lower()).replace(" ", "")
-            group_query = Group.objects.filter(tag__contains=tag)
             response = []
-            for i in group_query:
-                response.append(GroupReadService.__map_group(i))
+            if forward:
+                if reference_id is not None:
+                    tag = (search_input.lower()).replace(" ", "")
+                    group_query = Group.objects.filter(tag__contains=tag, id__lt=reference_id).order_by("-id")[:3]
+
+                    for i in group_query:
+                        response.append(GroupReadService.__map_group(i))
+                else:
+                    tag = (search_input.lower()).replace(" ", "")
+                    group_query = Group.objects.filter(tag__contains=tag).order_by("-id")[:3]
+
+                    for i in group_query:
+                        response.append(GroupReadService.__map_group(i))
+            else:
+                if reference_id is not None:
+                    tag = (search_input.lower()).replace(" ", "")
+                    group_query = Group.objects.filter(tag__contains=tag, id__gt=reference_id).order_by("id")[:3]
+
+                    for i in group_query:
+                        response.append(GroupReadService.__map_group(i))
+                else:
+                    tag = (search_input.lower()).replace(" ", "")
+                    group_query = Group.objects.filter(tag__contains=tag).order_by("id")[:3]
+
+                    for i in group_query:
+                        response.append(GroupReadService.__map_group(i))
+
 
             return response
         except exceptions.ObjectDoesNotExist:
-            return None
+            return []
 
     @staticmethod
     def read_group(group_id):

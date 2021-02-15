@@ -9,8 +9,9 @@ urlpatterns = [
 
     # USER
     path('api/update/profile', user_views.update_profile, name='update_profile'),
-    #BUGGED
+
     path('api/search/user', user_views.search_user, name="search_user"),
+    path('api/search/user/backward', user_views.search_user_backward, name="search_user_backward"),
     path('api/user', user_views.create_user, name="create_user"),
     path('api/get/user/by_id', user_views.get_user_by_id, name="get_user_by_id"),
     path('api/get/users', user_views.get_users, name="get_users"),
@@ -23,9 +24,11 @@ urlpatterns = [
     path('api/get/group', group_views.get_group, name="get_group"),
     path('api/get/group/members', group_views.get_group_members, name='get_group_members'),
     path('api/search/group', group_views.search_group, name='search_group'),
+    path('api/search/group/backward', group_views.search_group_backward, name='search_group_backward'),
     # GROUP
 
     # REPOSITORY
+    path('api/check/access/to/branch', file_management_views.check_access, name="check_access"),
     path('api/get/branch', file_management_views.read_branch, name="read_branch"),
     path('api/get/repository', file_management_views.get_repository, name="read_repository"),
     path('api/get/repository/branches', file_management_views.read_repository_branches, name="read_repository_branches"),
@@ -39,6 +42,8 @@ urlpatterns = [
     path('api/get/latest/commits', file_management_views.read_latest_commits, name="get_latest_commits"),
     path('api/repository', file_management_views.create_repository, name="create_repository"),
     path('api/branch', file_management_views.create_branch, name="create_branch"),
+    path('api/search/branch', file_management_views.search_branch, name="search_branch"),
+    path('api/search/branch/backward', file_management_views.search_branch_backwards, name="search_branch_backwards"),
     path('api/merge', file_management_views.merge_branches, name="merge_branches"),
     path('api/get/group/repositories', file_management_views.read_group_repositories, name="read_group_repositories"),
     path('api/get/branch/commits', file_management_views.read_branch_commits, name="read_branch_commits"),

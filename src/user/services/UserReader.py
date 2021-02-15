@@ -9,19 +9,56 @@ from src.group.services.GroupReader import GroupReadService
 class UserReadService:
 
     @staticmethod
-    def search_user(search_input):
+    def search_user(search_input, reference_id, forward):
         try:
-            user_query = User.objects.filter(Q(name__icontains=search_input) | Q(email__icontains=search_input))
             response = []
-            for i in user_query:
-                group = GroupReadService.read_first_group(user_id=i.id)
-                if group is not None:
-                    response.append(UserReadService.map_user(i, group_id=group['group_id']))
+            if forward:
+                if reference_id is not None:
+                    user_query = User.objects.filter(
+                        (Q(name__icontains=search_input) | Q(email__icontains=search_input))
+                        , id__lt=reference_id).order_by("-id")[:3]
+
+                    for i in user_query:
+                        group = GroupReadService.read_first_group(user_id=i.id)
+                        if group is not None:
+                            response.append(UserReadService.map_user(i, group_id=group['group_id']))
+                        else:
+                            response.append(UserReadService.map_user(i, group_id=None))
                 else:
-                    response.append(UserReadService.map_user(i, group_id=None))
+                    user_query = User.objects.filter(
+                        (Q(name__icontains=search_input) | Q(email__icontains=search_input))).order_by("-id")[:3]
+
+                    for i in user_query:
+                        group = GroupReadService.read_first_group(user_id=i.id)
+                        if group is not None:
+                            response.append(UserReadService.map_user(i, group_id=group['group_id']))
+                        else:
+                            response.append(UserReadService.map_user(i, group_id=None))
+            else:
+                if reference_id is not None:
+                    user_query = User.objects.filter(
+                        (Q(name__icontains=search_input) | Q(email__icontains=search_input)),
+                        id__gt=reference_id).order_by("id")[:3]
+
+                    for i in user_query:
+                        group = GroupReadService.read_first_group(user_id=i.id)
+                        if group is not None:
+                            response.append(UserReadService.map_user(i, group_id=group['group_id']))
+                        else:
+                            response.append(UserReadService.map_user(i, group_id=None))
+                else:
+                    user_query = User.objects.filter(
+                        (Q(name__icontains=search_input) | Q(email__icontains=search_input))).order_by("id")[:3]
+
+                    for i in user_query:
+                        group = GroupReadService.read_first_group(user_id=i.id)
+                        if group is not None:
+                            response.append(UserReadService.map_user(i, group_id=group['group_id']))
+                        else:
+                            response.append(UserReadService.map_user(i, group_id=None))
             return response
         except exceptions.ObjectDoesNotExist:
-            return status.HTTP_500_INTERNAL_SERVER_ERROR
+            return []
 
     @staticmethod
     def read_user_by_email(email):

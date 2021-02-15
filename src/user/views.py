@@ -5,6 +5,22 @@ from src.user.services import UserReader, UserFactory
 from src.user.services import Auth
 
 
+@route(["PATCH"])
+def search_user_backward(request):
+    data = UserReader.UserReadService.search_user(search_input=request.data['search_input'],
+                                                  reference_id=request.data['min_id'],
+                                                  forward=True)
+    return callRespond(data)
+
+
+@route(['PATCH'])
+def search_user(request):
+    data = UserReader.UserReadService.search_user(search_input=request.data['search_input'],
+                                                  reference_id=request.data['max_id'],
+                                                  forward=True)
+    return callRespond(data)
+
+
 @route(['POST'])
 def create_user(request):
     return HttpResponse(status=UserFactory.create_user(nationality=request.data['nationality'],
@@ -32,12 +48,6 @@ def update_profile(request):
 @route(['PATCH'])
 def get_user_by_id(request):
     data = UserReader.UserReadService.read_user_by_id(request.data['user_id'])
-    return callRespond(data)
-
-
-@route(['PATCH'])
-def search_user(request):
-    data = UserReader.UserReadService.search_user(search_input=request.data['search_input'])
     return callRespond(data)
 
 

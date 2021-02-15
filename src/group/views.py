@@ -4,6 +4,15 @@ from src.group.services import GroupFactory, GroupReader
 from django.http import HttpResponse
 
 
+@route(["PATCH"])
+def search_group_backward(request):
+    return callRespond(
+        GroupReader.GroupReadService.search_group(search_input=request.data['search_input'],
+                                                  reference_id=request.data['min_id'],
+                                                  forward=False)
+    )
+
+
 @route(['POST'])
 def create_group(request):
     return HttpResponse(
@@ -23,7 +32,9 @@ def get_group_members(request):
 @route(['PATCH'])
 def search_group(request):
     return callRespond(
-        GroupReader.GroupReadService.search_group(search_input=request.data['search_input'])
+        GroupReader.GroupReadService.search_group(search_input=request.data['search_input'],
+                                                  reference_id=request.data['max_id'],
+                                                  forward=True)
     )
 
 

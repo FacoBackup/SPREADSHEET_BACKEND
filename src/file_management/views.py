@@ -8,6 +8,56 @@ from django.http import HttpResponse
 import time
 
 
+@route(['PATCH'])
+def check_access(request):
+    token = request.META.get('HTTP_AUTHORIZATION')
+    if token is not None:
+        decoded_token = jwt.decode(token, key="askdasdiuh123i1y98yejas9d812hiu89dqw9", algorithms="HS256")
+        if decoded_token['exp'] > time.time():
+            return callRespond(RepositoryReader.RepositoryReadService.check_access(user_id=decoded_token['user_id'],
+                                                                                   branch_id=request.data["branch_id"]))
+
+        else:
+            return HttpResponse(status=status.HTTP_401_UNAUTHORIZED)
+    else:
+        return HttpResponse(status=status.HTTP_401_UNAUTHORIZED)
+
+
+@route(["PATCH"])
+def search_branch_backwards(request):
+    token = request.META.get('HTTP_AUTHORIZATION')
+    if token is not None:
+        decoded_token = jwt.decode(token, key="askdasdiuh123i1y98yejas9d812hiu89dqw9", algorithms="HS256")
+        if decoded_token['exp'] > time.time():
+            return callRespond(RepositoryReader.RepositoryReadService.search_branch(
+                search_input=request.data['search_input'],
+                reference_id=request.data['min_id'],
+                forward=False))
+
+        else:
+            return HttpResponse(status=status.HTTP_401_UNAUTHORIZED)
+    else:
+        return HttpResponse(status=status.HTTP_401_UNAUTHORIZED)
+
+
+@route(["PATCH"])
+def search_branch(request):
+    token = request.META.get('HTTP_AUTHORIZATION')
+    if token is not None:
+        decoded_token = jwt.decode(token, key="askdasdiuh123i1y98yejas9d812hiu89dqw9", algorithms="HS256")
+        if decoded_token['exp'] > time.time():
+            return callRespond(RepositoryReader.RepositoryReadService.search_branch(
+                search_input=request.data['search_input'],
+                reference_id=request.data['max_id'],
+                forward=True)
+            )
+
+        else:
+            return HttpResponse(status=status.HTTP_401_UNAUTHORIZED)
+    else:
+        return HttpResponse(status=status.HTTP_401_UNAUTHORIZED)
+
+
 @route(['DELETE'])
 def delete_cell(request):
     token = request.META.get('HTTP_AUTHORIZATION')
@@ -313,7 +363,8 @@ def verify_open_commit(request):
     if token is not None:
         decoded_token = jwt.decode(token, key="askdasdiuh123i1y98yejas9d812hiu89dqw9", algorithms="HS256")
         if decoded_token['exp'] > time.time():
-            return callRespond(RepositoryReader.RepositoryReadService.verify_open_commit(branch_id=request.data['branch_id']))
+            return callRespond(
+                RepositoryReader.RepositoryReadService.verify_open_commit(branch_id=request.data['branch_id']))
         else:
             return HttpResponse(status=status.HTTP_401_UNAUTHORIZED)
     else:

@@ -27,12 +27,12 @@ def create_user(
                                 study=study,
                                 nationality=nationality)
             created_user.save()
-            groups = None
+            group = None
             if department is not None:
-                groups = GroupReader.GroupReadService.search_group(search_input=department)
+                group = GroupReader.GroupReadService.read_group_by_name(name=department)
 
-            if groups:
-                GroupManagement.add_member(created_user.id, group_id=groups[0]['id'])
+            if group is not None:
+                GroupManagement.add_member(created_user.id, group_id=group[0]['id'])
                 return status.HTTP_201_CREATED
             else:
                 return status.HTTP_201_CREATED
