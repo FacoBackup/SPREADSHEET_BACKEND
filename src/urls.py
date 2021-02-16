@@ -2,14 +2,18 @@ from django.contrib import admin
 from django.urls import path
 from src.user import views as user_views
 from src.group import views as group_views
-from src.file_management import views as file_management_views
+from src.file_management.views import (RepositoryViews,
+                                       CellViews,
+                                       ContributorViews,
+                                       ColumnViews,
+                                       BranchViews,
+                                       CommitViews)
 
 urlpatterns = [
     path('admin/', admin.site.urls),
 
     # USER
     path('api/update/profile', user_views.update_profile, name='update_profile'),
-
     path('api/search/user', user_views.search_user, name="search_user"),
     path('api/search/user/backward', user_views.search_user_backward, name="search_user_backward"),
     path('api/user', user_views.create_user, name="create_user"),
@@ -27,38 +31,49 @@ urlpatterns = [
     path('api/search/group/backward', group_views.search_group_backward, name='search_group_backward'),
     # GROUP
 
+
+    # BRANCH
+    path('api/get/branch', BranchViews.read_branch, name="read_branch"),
+    path('api/get/repository/branches', BranchViews.read_repository_branches, name="read_repository_branches"),
+    path('api/member/by/branch', BranchViews.verify_member_by_branch, name="verify_member_by_branch"),
+    path('api/branch/contributors', BranchViews.read_branch_contributors, name="branch_contributors"),
+    path('api/user/branches', BranchViews.read_contributor_branches, name='get_user_branches'),
+    path('api/branch', BranchViews.create_branch, name="create_branch"),
+    path('api/search/branch', BranchViews.search_branch, name="search_branch"),
+    path('api/search/branch/backward', BranchViews.search_branch_backwards, name="search_branch_backwards"),
+    path('api/merge', BranchViews.merge_branches, name="merge_branches"),
+    path('api/verify/branch/name', BranchViews.verify_branch_name, name='verify_branch_name'),
+    path('api/branch/content', BranchViews.read_all_content_by_branch, name="get_all_content"),
+    path('api/export', BranchViews.export_formatted_json, name='export_formatted_json'),
+    path('api/check/access/to/branch', BranchViews.check_access, name="check_access"),
+    # BRANCH
+
+    # CONTRIBUTOR
+    path('api/add/contributor', ContributorViews.add_contributor, name='add_contributor'),
+    path('api/remove/contributor', ContributorViews.remove_contributor, name='remove_contributor'),
+    # CONTRIBUTOR
+
     # REPOSITORY
-    path('api/check/access/to/branch', file_management_views.check_access, name="check_access"),
-    path('api/get/branch', file_management_views.read_branch, name="read_branch"),
-    path('api/get/repository', file_management_views.get_repository, name="read_repository"),
-    path('api/get/repository/branches', file_management_views.read_repository_branches, name="read_repository_branches"),
-    path('api/member/by/branch', file_management_views.verify_member_by_branch, name="verify_member_by_branch"),
-    path('api/make/commit', file_management_views.make_commit, name='make_commit'),
-    path('api/get/branch/contributors', file_management_views.read_branch_contributors, name="branch_contributors"),
-    path('api/user/branches', file_management_views.read_contributor_branches, name='get_user_branches'),
-    #TODO FONTEND
-    path('api/add/contributor', file_management_views.add_contributor, name='add_contributor'),
-    path('api/remove/contributor', file_management_views.remove_contributor, name='remove_contributor'),
-    path('api/get/latest/commits', file_management_views.read_latest_commits, name="get_latest_commits"),
-    path('api/repository', file_management_views.create_repository, name="create_repository"),
-    path('api/branch', file_management_views.create_branch, name="create_branch"),
-    path('api/search/branch', file_management_views.search_branch, name="search_branch"),
-    path('api/search/branch/backward', file_management_views.search_branch_backwards, name="search_branch_backwards"),
-    path('api/merge', file_management_views.merge_branches, name="merge_branches"),
-    path('api/get/group/repositories', file_management_views.read_group_repositories, name="read_group_repositories"),
-    path('api/get/branch/commits', file_management_views.read_branch_commits, name="read_branch_commits"),
-    path('api/get/open/commit', file_management_views.verify_open_commit, name="verify_open_commit"),
-    path('api/verify/branch/name', file_management_views.verify_branch_name, name='verify_branch_name'),
+    path('api/repository', RepositoryViews.get_repository, name="read_repository"),
+    path('api/repository', RepositoryViews.create_repository, name="create_repository"),
+    path('api/group/repositories', RepositoryViews.read_group_repositories, name="read_group_repositories"),
     # REPOSITORY
 
-    # FORM
-    #TODO
-    path('api/export', file_management_views.export_formatted_json, name='export_formatted_json'),
-    path('api/branch/update/column', file_management_views.update_column, name="update_column"),
-    path('api/branch/column', file_management_views.create_column, name="create_column"),
-    path('api/branch/cell', file_management_views.create_cell, name="create_cell"),
-    path('api/branch/delete/cell', file_management_views.delete_cell, name="delete_cell"),
-    path('api/branch/update/cell', file_management_views.update_cell, name="update_cell"),
-    path('api/get/branch/content', file_management_views.read_all_content_by_branch, name="get_all_content"),
-    # FORM
+    # COMMIT
+    path('api/get/branch/commits', CommitViews.read_branch_commits, name="read_branch_commits"),
+    path('api/make/commit', CommitViews.make_commit, name='make_commit'),
+    path('api/latest/commits', CommitViews.read_latest_commits, name="get_latest_commits"),
+    path('api/verify/open/commit', CommitViews.verify_open_commit, name="verify_open_commit"),
+    # COMMIT
+
+    # CELL
+    path('api/branch/cell', CellViews.create_cell, name="create_cell"),
+    path('api/branch/delete/cell', CellViews.delete_cell, name="delete_cell"),
+    path('api/branch/update/cell', CellViews.update_cell, name="update_cell"),
+    # CELL
+
+    # COLUMN
+    path('api/branch/update/column', ColumnViews.update_column, name="update_column"),
+    path('api/branch/column', ColumnViews.create_column, name="create_column"),
+    # COLUMN
 ]
