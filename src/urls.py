@@ -48,6 +48,7 @@ urlpatterns = [
     path('api/get/group/repositories', file_management_views.read_group_repositories, name="read_group_repositories"),
     path('api/get/branch/commits', file_management_views.read_branch_commits, name="read_branch_commits"),
     path('api/get/open/commit', file_management_views.verify_open_commit, name="verify_open_commit"),
+    path('api/verify/branch/name', file_management_views.verify_branch_name, name='verify_branch_name'),
     # REPOSITORY
 
     # FORM

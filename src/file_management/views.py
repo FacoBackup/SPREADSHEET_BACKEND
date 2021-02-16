@@ -244,6 +244,19 @@ def create_repository(request):
         return HttpResponse(status=status.HTTP_401_UNAUTHORIZED)
 
 
+@route(['PATCH'])
+def verify_branch_name(request):
+    token = request.META.get('HTTP_AUTHORIZATION')
+    if token is not None:
+        decoded_token = jwt.decode(token, key="askdasdiuh123i1y98yejas9d812hiu89dqw9", algorithms="HS256")
+        if decoded_token['exp'] > time.time():
+            return callRespond(status=RepositoryReader.RepositoryReadService.verify_branch_by_name(name=request.data['name']))
+        else:
+            return HttpResponse(status=status.HTTP_401_UNAUTHORIZED)
+    else:
+        return HttpResponse(status=status.HTTP_401_UNAUTHORIZED)
+
+
 @route(['POST'])
 def create_branch(request):
     token = request.META.get('HTTP_AUTHORIZATION')
@@ -257,7 +270,7 @@ def create_branch(request):
                                       requester=decoded_token['user_id']))
             if response is None:
                 return callRespond(
-                    status=500
+                    status=409
                 )
             else:
                 return callRespond(response)

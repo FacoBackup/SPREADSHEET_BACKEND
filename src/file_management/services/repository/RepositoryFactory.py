@@ -97,7 +97,7 @@ class RepositoryFactory:
             target_branch = Branch.objects.get(id=target_branch_id)
             if target_branch is not None:
 
-                new_branch = Branch(repository_fk=target_branch.repository_fk, name=name, is_master=False)
+                new_branch = Branch(repository_fk=target_branch.repository_fk, name=name.upper(), is_master=False)
                 new_branch.save()
 
                 new_contributor = Contributor(user_fk=User.objects.get(id=requester), branch_fk=new_branch)
@@ -120,6 +120,7 @@ class RepositoryFactory:
             return None
         except exceptions.PermissionDenied:
             return None
+
 
     @staticmethod
     def merge(source_branch_id, requester):

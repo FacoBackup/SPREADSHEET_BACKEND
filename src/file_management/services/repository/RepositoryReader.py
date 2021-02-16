@@ -7,6 +7,19 @@ from src.group.services import GroupReader
 
 class RepositoryReadService:
     @staticmethod
+    def verify_branch_by_name(name):
+        try:
+            data = Branch.objects.filter(name=name.upper())
+
+            if len(data) > 0:
+                return 409
+            else:
+                return 200
+
+        except exceptions.ObjectDoesNotExist:
+            return 200
+
+    @staticmethod
     def check_access(user_id, branch_id):
         try:
             access = Contributor.objects.get(user_fk=user_id, branch_fk=branch_id)
