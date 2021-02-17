@@ -1,3 +1,5 @@
+import datetime
+
 from src.user.services import UserReader
 from ldap3 import Server, Connection, ALL
 import jwt
@@ -11,8 +13,12 @@ def sign_in(user_email, password):
         # server = Server('ldap://ldap.aeb.gov.br', get_info=ALL)
         # connection = Connection(server, user=user.email, password=password)
         # if connection.bind():
-        encoded_jwt = jwt.encode({"user_id": user['id'], 'exp': (time_.time() + 1000 * 60 * 10)},
-                                 "askdasdiuh123i1y98yejas9d812hiu89dqw9", algorithm="HS256")
+        exp = datetime.datetime.now().timestamp() * 1000 + 604800000
+        encoded_jwt = jwt.encode({
+            "user_id": user['id'],
+            'exp': exp
+        }, "askdasdiuh123i1y98yejas9d812hiu89dqw9", algorithm="HS256")
+
         return {
             "JWT": encoded_jwt,
             "ID": user["id"],

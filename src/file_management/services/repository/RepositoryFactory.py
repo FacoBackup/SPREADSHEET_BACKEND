@@ -4,7 +4,7 @@ from src.file_management.models import Repository, Branch, Commit, Column, Cell,
 from src.user.models import User
 from src.group.models import Group
 from src.file_management.services.form import FormFactory, FormReader
-from src.group.services import GroupReader
+from src.file_management.services.repository import RepositoryReader
 import datetime
 
 
@@ -71,25 +71,35 @@ class RepositoryFactory:
 
     @staticmethod
     def add_contributor_branch(branch_id, user_id, requester):
-        branch = Branch.objects.get(id=branch_id)
-        contributor = Contributor.objects.get(user_fk=requester, branch_fk=branch_id)
-        user = User.objects.get(id=user_id)
-        if branch is not None and contributor is not None and user is not None:
-            new_contributor = Contributor(user_fk=user, branch_fk=branch)
-            new_contributor.save()
-            return status.HTTP_201_CREATED
-        else:
-            return status.HTTP_500_INTERNAL_SERVER_ERROR
+        try:
+            branch = Branch.objects.get(id=branch_id)
+
+            user = User.objects.get(id=user_id)
+            if (branch is not None and
+                    not RepositoryReader.RepositoryReadService.verify_contributor(user_id=user_id,
+                                                                                  branch_id=branch_id) and
+                    RepositoryReader.RepositoryReadService.verify_contributor(user_id=requester, branch_id=branch_id)):
+                new_contributor = Contributor(user_fk=user, branch_fk=branch)
+                new_contributor.save()
+                return status.HTTP_201_CREATED
+            else:
+                return 409
+        except exceptions.ObjectDoesNotExist:
+            return 500
 
     @staticmethod
     def remove_contributor_branch(branch_id, user_id, requester):
-        contributor = Contributor.objects.get(user_fk=requester, branch_fk=branch_id)
-        if contributor is not None:
-            to_be_removed = Contributor.objects.get(user_fk=user_id, branch_fk=branch_id)
-            to_be_removed.delete()
-            return status.HTTP_200_OK
-        else:
-            return status.HTTP_401_UNAUTHORIZED
+        try:
+            contributor = RepositoryReader.RepositoryReadService.verify_contributor(user_id=requester,
+                                                                                    branch_id=branch_id)
+            if contributor:
+                to_be_removed = Contributor.objects.get(user_fk=user_id, branch_fk=branch_id)
+                to_be_removed.delete()
+                return 200
+            else:
+                return 401
+        except exceptions.ObjectDoesNotExist:
+            return 500
 
     @staticmethod
     def create_branch(target_branch_id, requester, name):
@@ -120,7 +130,6 @@ class RepositoryFactory:
             return None
         except exceptions.PermissionDenied:
             return None
-
 
     @staticmethod
     def merge(source_branch_id, requester):

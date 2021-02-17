@@ -65,7 +65,11 @@ class UserReadService:
         try:
             user_query = User.objects.get(email=email)
             if user_query is not None:
-                return UserReadService.map_user(user_query, None)
+                group = GroupReadService.read_first_group(user_id=user_query.id)
+                if group is not None:
+                    return UserReadService.map_user(user_query, group['group_id'])
+                else:
+                    return UserReadService.map_user(user_query, None)
         except exceptions.ObjectDoesNotExist:
             return None
         except exceptions.FieldError:

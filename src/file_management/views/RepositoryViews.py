@@ -1,3 +1,5 @@
+import datetime
+
 import jwt
 from rest_framework.decorators import (api_view as route)
 from rest_framework.response import Response as callRespond
@@ -13,7 +15,7 @@ def create_repository(request):
     token = request.META.get('HTTP_AUTHORIZATION')
     if token is not None:
         decoded_token = jwt.decode(token, key="askdasdiuh123i1y98yejas9d812hiu89dqw9", algorithms="HS256")
-        if decoded_token['exp'] > time.time():
+        if decoded_token['exp'] > datetime.datetime.now().timestamp() * 1000:
             return callRespond(
                 status=RepositoryFactory.RepositoryFactory.create_repository(
                     name=request.data['name'],
@@ -33,7 +35,7 @@ def get_repository(request):
     token = request.META.get('HTTP_AUTHORIZATION')
     if token is not None:
         decoded_token = jwt.decode(token, key="askdasdiuh123i1y98yejas9d812hiu89dqw9", algorithms="HS256")
-        if decoded_token['exp'] > time.time():
+        if decoded_token['exp'] > datetime.datetime.now().timestamp() * 1000:
             data = RepositoryReader.RepositoryReadService.read_repository(
                 repository_id=int(request.GET.get('repository_id'))
             )
@@ -52,7 +54,7 @@ def read_group_repositories(request):
     token = request.META.get('HTTP_AUTHORIZATION')
     if token is not None:
         decoded_token = jwt.decode(token, key="askdasdiuh123i1y98yejas9d812hiu89dqw9", algorithms="HS256")
-        if decoded_token['exp'] > time.time():
+        if decoded_token['exp'] > datetime.datetime.now().timestamp() * 1000:
             return callRespond(
                 RepositoryReader.RepositoryReadService.read_group_repositories(
                     group_id=int(request.GET.get('group_id'))

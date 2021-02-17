@@ -1,3 +1,5 @@
+import datetime
+
 import jwt
 from rest_framework.decorators import (api_view as route)
 from rest_framework.response import Response as callRespond
@@ -13,7 +15,7 @@ def verify_open_commit(request):
     token = request.META.get('HTTP_AUTHORIZATION')
     if token is not None:
         decoded_token = jwt.decode(token, key="askdasdiuh123i1y98yejas9d812hiu89dqw9", algorithms="HS256")
-        if decoded_token['exp'] > time.time():
+        if decoded_token['exp'] > datetime.datetime.now().timestamp() * 1000:
             return callRespond(
                 RepositoryReader.RepositoryReadService.verify_open_commit(branch_id=int(request.GET.get('branch_id'))))
         else:
@@ -35,7 +37,7 @@ def make_commit(request):
     token = request.META.get('HTTP_AUTHORIZATION')
     if token is not None:
         decoded_token = jwt.decode(token, key="askdasdiuh123i1y98yejas9d812hiu89dqw9", algorithms="HS256")
-        if decoded_token['exp'] > time.time():
+        if decoded_token['exp'] > datetime.datetime.now().timestamp() * 1000:
             return HttpResponse(
                 status=RepositoryFactory.RepositoryFactory.commit(
                     branch_id=request.data['branch_id'],
@@ -53,7 +55,7 @@ def read_branch_commits(request):
     token = request.META.get('HTTP_AUTHORIZATION')
     if token is not None:
         decoded_token = jwt.decode(token, key="askdasdiuh123i1y98yejas9d812hiu89dqw9", algorithms="HS256")
-        if decoded_token['exp'] > time.time():
+        if decoded_token['exp'] > datetime.datetime.now().timestamp() * 1000:
             return callRespond(
                 RepositoryReader.RepositoryReadService.read_branch_commits(branch_id=request.data['branch_id'])
             )

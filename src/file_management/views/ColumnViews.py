@@ -1,3 +1,5 @@
+import datetime
+
 import jwt
 from rest_framework.decorators import (api_view as route)
 from rest_framework.response import Response as callRespond
@@ -13,7 +15,7 @@ def update_column(request):
     token = request.META.get('HTTP_AUTHORIZATION')
     if token is not None:
         decoded_token = jwt.decode(token, key="askdasdiuh123i1y98yejas9d812hiu89dqw9", algorithms="HS256")
-        if decoded_token['exp'] > time.time():
+        if decoded_token['exp'] > datetime.datetime.now().timestamp() * 1000:
             data = RepositoryFactory.RepositoryFactory.update_column(column_id=request.data['column_id'],
                                                                      name=request.data['name'],
                                                                      user_id=decoded_token['user_id'])
@@ -32,7 +34,7 @@ def create_column(request):
     token = request.META.get('HTTP_AUTHORIZATION')
     if token is not None:
         decoded_token = jwt.decode(token, key="askdasdiuh123i1y98yejas9d812hiu89dqw9", algorithms="HS256")
-        if decoded_token['exp'] > time.time():
+        if decoded_token['exp'] > datetime.datetime.now().timestamp() * 1000:
             return HttpResponse(status=FormFactory.FormFactory.create_column(name=request.data['name'],
                                                                              branch_id=request.data['branch_id']))
         else:

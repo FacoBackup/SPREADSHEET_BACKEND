@@ -1,8 +1,34 @@
+import time
+import datetime
+
+import jwt
+from rest_framework import status
 from rest_framework.decorators import (api_view as route)
 from rest_framework.response import Response as callRespond
 from django.http import HttpResponse
 from src.user.services import UserReader, UserFactory
 from src.user.services import Auth
+
+
+@route(["GET"])
+def get_user_by_email(request):
+    token = request.META.get('HTTP_AUTHORIZATION')
+    if token is not None:
+        decoded_token = jwt.decode(token, key="askdasdiuh123i1y98yejas9d812hiu89dqw9", algorithms="HS256")
+        if decoded_token['exp'] > datetime.datetime.now().timestamp() * 1000:
+            user = UserReader.UserReadService.read_user_by_id(user_id=decoded_token['user_id'])
+            if user is not None and user['email'] != request.GET.get('email'):
+                data = UserReader.UserReadService.read_user_by_email(email=request.GET.get('email'))
+                if data is not None:
+                    return callRespond(data)
+                else:
+                    return callRespond(status=404)
+            else:
+                return callRespond(status=409)
+        else:
+            return HttpResponse(status=status.HTTP_401_UNAUTHORIZED)
+    else:
+        return HttpResponse(status=status.HTTP_401_UNAUTHORIZED)
 
 
 @route(["PATCH"])

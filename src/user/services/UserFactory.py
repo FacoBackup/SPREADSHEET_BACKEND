@@ -32,7 +32,7 @@ def create_user(
                 group = GroupReader.GroupReadService.read_group_by_name(name=department)
 
             if group is not None:
-                GroupManagement.add_member(created_user.id, group_id=group[0]['id'])
+                GroupManagement.add_member(created_user.id, group_id=group[0].id)
                 return status.HTTP_201_CREATED
             else:
                 return status.HTTP_201_CREATED

@@ -13,12 +13,13 @@ urlpatterns = [
     path('admin/', admin.site.urls),
 
     # USER
+    path('api/user/by_email', user_views.get_user_by_email, name="get_user_by_email"),
+    path('api/get/users', user_views.get_users, name="get_users"),
     path('api/update/profile', user_views.update_profile, name='update_profile'),
     path('api/search/user', user_views.search_user, name="search_user"),
     path('api/search/user/backward', user_views.search_user_backward, name="search_user_backward"),
     path('api/user', user_views.create_user, name="create_user"),
     path('api/get/user/by_id', user_views.get_user_by_id, name="get_user_by_id"),
-    path('api/get/users', user_views.get_users, name="get_users"),
     path('api/get/users/by_max_id', user_views.get_user_by_max_id, name="get_users_by_max_id"),
     path('api/sign_in', user_views.sign_in, name="sign_in"),
     # USER
@@ -33,7 +34,7 @@ urlpatterns = [
 
 
     # BRANCH
-    path('api/get/branch', BranchViews.read_branch, name="read_branch"),
+    path('api/branch', BranchViews.read_branch, name="read_branch"),
     path('api/get/repository/branches', BranchViews.read_repository_branches, name="read_repository_branches"),
     path('api/member/by/branch', BranchViews.verify_member_by_branch, name="verify_member_by_branch"),
     path('api/branch/contributors', BranchViews.read_branch_contributors, name="branch_contributors"),

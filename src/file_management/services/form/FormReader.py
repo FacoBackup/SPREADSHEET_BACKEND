@@ -62,7 +62,7 @@ class FormReadService:
 
             for i in range(max_row + 1):
                 row = []
-                row_cells = Cell.objects.filter(column_fk__branch_fk__id=branch_id, row=i)
+                row_cells = Cell.objects.filter(column_fk__branch_fk__id=branch_id, row=i).order_by('column_fk__id')
 
                 for j in row_cells:
                     row.append(FormReadService.__map_cell_json(j))

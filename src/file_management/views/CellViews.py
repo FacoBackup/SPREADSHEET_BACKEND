@@ -1,3 +1,5 @@
+import datetime
+
 import jwt
 from rest_framework.decorators import (api_view as route)
 from rest_framework.response import Response as callRespond
@@ -13,7 +15,7 @@ def delete_cell(request):
     token = request.META.get('HTTP_AUTHORIZATION')
     if token is not None:
         decoded_token = jwt.decode(token, key="askdasdiuh123i1y98yejas9d812hiu89dqw9", algorithms="HS256")
-        if decoded_token['exp'] > time.time():
+        if decoded_token['exp'] > datetime.datetime.now().timestamp() * 1000:
             data = RepositoryFactory.RepositoryFactory.delete_cell(cell_id=request.data['cell_id'],
                                                                    user_id=decoded_token['user_id'])
             if data is not None:
@@ -31,7 +33,7 @@ def create_cell(request):
     token = request.META.get('HTTP_AUTHORIZATION')
     if token is not None:
         decoded_token = jwt.decode(token, key="askdasdiuh123i1y98yejas9d812hiu89dqw9", algorithms="HS256")
-        if decoded_token['exp'] > time.time():
+        if decoded_token['exp'] > datetime.datetime.now().timestamp() * 1000:
             response = FormFactory.FormFactory.create_cell(content=request.data['content'],
                                                            row=request.data['row'],
                                                            column_id=request.data['column_id'],
@@ -54,7 +56,7 @@ def read_all_cells(request):
     token = request.META.get('HTTP_AUTHORIZATION')
     if token is not None:
         decoded_token = jwt.decode(token, key="askdasdiuh123i1y98yejas9d812hiu89dqw9", algorithms="HS256")
-        if decoded_token['exp'] > time.time():
+        if decoded_token['exp'] > datetime.datetime.now().timestamp() * 1000:
             return callRespond(
                 FormReader.FormReadService.read_all_content_by_branch(
                     branch_id=int(request.GET.get('branch_id'))
@@ -71,7 +73,7 @@ def update_cell(request):
     token = request.META.get('HTTP_AUTHORIZATION')
     if token is not None:
         decoded_token = jwt.decode(token, key="askdasdiuh123i1y98yejas9d812hiu89dqw9", algorithms="HS256")
-        if decoded_token['exp'] > time.time():
+        if decoded_token['exp'] > datetime.datetime.now().timestamp() * 1000:
             return callRespond(
                 status=RepositoryFactory.RepositoryFactory.update_cell(content=request.data['content'],
                                                                        cell_id=request.data['cell_id'],
