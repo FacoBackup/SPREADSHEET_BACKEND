@@ -73,23 +73,6 @@ def read_all_content_by_branch(request):
         return HttpResponse(status=status.HTTP_401_UNAUTHORIZED)
 
 
-@route(['PATCH'])
-def read_repository_branches(request):
-    token = request.META.get('HTTP_AUTHORIZATION')
-    if token is not None:
-        decoded_token = jwt.decode(token, key="askdasdiuh123i1y98yejas9d812hiu89dqw9", algorithms="HS256")
-        if decoded_token['exp'] > datetime.datetime.now().timestamp() * 1000:
-            return callRespond(
-                RepositoryReader.
-                    RepositoryReadService.
-                    read_repository_branches(repository_id=request.data['repository_id'])
-            )
-        else:
-            return HttpResponse(status=status.HTTP_401_UNAUTHORIZED)
-    else:
-        return HttpResponse(status=status.HTTP_401_UNAUTHORIZED)
-
-
 @route(['GET'])
 def verify_branch_name(request):
     token = request.META.get('HTTP_AUTHORIZATION')
@@ -157,15 +140,34 @@ def merge_branches(request):
         return HttpResponse(status=status.HTTP_401_UNAUTHORIZED)
 
 
-@route(['PATCH'])
+@route(['GET'])
 def verify_member_by_branch(request):
     token = request.META.get('HTTP_AUTHORIZATION')
     if token is not None:
         decoded_token = jwt.decode(token, key="askdasdiuh123i1y98yejas9d812hiu89dqw9", algorithms="HS256")
         if decoded_token['exp'] > datetime.datetime.now().timestamp() * 1000:
             return callRespond(
-                RepositoryReader.RepositoryReadService.verify_member_by_branch(user_id=decoded_token['user_id'],
-                                                                               branch_id=request.data['branch_id'])
+                RepositoryReader.RepositoryReadService.verify_member_by_branch(
+                    user_id=decoded_token['user_id'],
+                    branch_id=int(request.GET.get('branch_id'))
+                )
+            )
+        else:
+            return HttpResponse(status=status.HTTP_401_UNAUTHORIZED)
+    else:
+        return HttpResponse(status=status.HTTP_401_UNAUTHORIZED)
+
+
+@route(['PATCH'])
+def read_repository_branches(request):
+    token = request.META.get('HTTP_AUTHORIZATION')
+    if token is not None:
+        decoded_token = jwt.decode(token, key="askdasdiuh123i1y98yejas9d812hiu89dqw9", algorithms="HS256")
+        if decoded_token['exp'] > datetime.datetime.now().timestamp() * 1000:
+            return callRespond(
+                RepositoryReader.RepositoryReadService.read_repository_branches(
+                    repository_id=request.data['repository_id']
+                )
             )
         else:
             return HttpResponse(status=status.HTTP_401_UNAUTHORIZED)
