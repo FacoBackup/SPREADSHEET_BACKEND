@@ -31,18 +31,18 @@ def get_user_by_email(request):
         return HttpResponse(status=status.HTTP_401_UNAUTHORIZED)
 
 
-@route(["PATCH"])
+@route(["GET"])
 def search_user_backward(request):
-    data = UserReader.UserReadService.search_user(search_input=request.data['search_input'],
-                                                  reference_id=request.data['min_id'],
+    data = UserReader.UserReadService.search_user(search_input=request.GET.get('search_input'),
+                                                  reference_id=int(request.GET.get('min_id')),
                                                   forward=True)
     return callRespond(data)
 
 
-@route(['PATCH'])
+@route(['GET'])
 def search_user(request):
-    data = UserReader.UserReadService.search_user(search_input=request.data['search_input'],
-                                                  reference_id=request.data['max_id'],
+    data = UserReader.UserReadService.search_user(search_input=request.GET.get('search_input'),
+                                                  reference_id=int(request.GET.get('max_id')),
                                                   forward=True)
     return callRespond(data)
 
@@ -77,18 +77,12 @@ def get_user_by_id(request):
     return callRespond(data)
 
 
-@route(['PATCH'])
-def get_user_by_max_id(request):
-    data = UserReader.UserReadService.read_user_by_max_id(request.data['max_id'])
-    return callRespond(data)
-
-
-@route(['PATCH'])
+@route(['GET'])
 def get_users(request):
-    if request.data['max_id'] is None:
+    if int(request.GET.get('max_id')) is None:
         return callRespond(UserReader.UserReadService.read_users())
     else:
-        return callRespond(UserReader.UserReadService.read_user_by_max_id(request.data['max_id']))
+        return callRespond(UserReader.UserReadService.read_user_by_max_id(int(request.GET.get('max_id'))))
 
 
 @route(['POST'])

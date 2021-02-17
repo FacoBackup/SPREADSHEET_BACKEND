@@ -183,15 +183,15 @@ def read_branch(request):
         return HttpResponse(status=404)
 
 
-@route(["PATCH"])
+@route(["GET"])
 def search_branch_backwards(request):
     token = request.META.get('HTTP_AUTHORIZATION')
     if token is not None:
         decoded_token = jwt.decode(token, key="askdasdiuh123i1y98yejas9d812hiu89dqw9", algorithms="HS256")
         if decoded_token['exp'] > datetime.datetime.now().timestamp() * 1000:
             return callRespond(RepositoryReader.RepositoryReadService.search_branch(
-                search_input=request.data['search_input'],
-                reference_id=request.data['min_id'],
+                search_input=request.GET.get['search_input'],
+                reference_id=int(request.GET.get['min_id']),
                 forward=False))
 
         else:
@@ -200,7 +200,7 @@ def search_branch_backwards(request):
         return HttpResponse(status=status.HTTP_401_UNAUTHORIZED)
 
 
-@route(["PATCH"])
+@route(["GET"])
 def search_branch(request):
     token = request.META.get('HTTP_AUTHORIZATION')
     if token is not None:
@@ -208,7 +208,7 @@ def search_branch(request):
         if decoded_token['exp'] > datetime.datetime.now().timestamp() * 1000:
             return callRespond(RepositoryReader.RepositoryReadService.search_branch(
                 search_input=request.data['search_input'],
-                reference_id=request.data['max_id'],
+                reference_id=int(request.GET.get('max_id')),
                 forward=True)
             )
 

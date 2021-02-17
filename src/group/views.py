@@ -4,12 +4,21 @@ from src.group.services import GroupFactory, GroupReader
 from django.http import HttpResponse
 
 
-@route(["PATCH"])
+@route(["GET"])
 def search_group_backward(request):
     return callRespond(
-        GroupReader.GroupReadService.search_group(search_input=request.data['search_input'],
-                                                  reference_id=request.data['min_id'],
+        GroupReader.GroupReadService.search_group(search_input=request.GET.get('search_input'),
+                                                  reference_id=int(request.GET.get('min_id')),
                                                   forward=False)
+    )
+
+
+@route(['GET'])
+def search_group(request):
+    return callRespond(
+        GroupReader.GroupReadService.search_group(search_input=request.GET.get('search_input'),
+                                                  reference_id=int(request.GET.get('max_id')),
+                                                  forward=True)
     )
 
 
@@ -22,24 +31,15 @@ def create_group(request):
     )
 
 
-@route(['PATCH'])
+@route(['GET'])
 def get_group_members(request):
     return callRespond(
-        GroupReader.GroupReadService.read_group_members(group_id=request.data['group_id'])
+        GroupReader.GroupReadService.read_group_members(group_id=int(request.GET.get('group_id')))
     )
 
 
-@route(['PATCH'])
-def search_group(request):
-    return callRespond(
-        GroupReader.GroupReadService.search_group(search_input=request.data['search_input'],
-                                                  reference_id=request.data['max_id'],
-                                                  forward=True)
-    )
-
-
-@route(['PATCH'])
+@route(['GET'])
 def get_group(request):
     return callRespond(
-        GroupReader.GroupReadService.read_group(request.data['group_id'])
+        GroupReader.GroupReadService.read_group(int(request.GET.get('group_id')))
     )

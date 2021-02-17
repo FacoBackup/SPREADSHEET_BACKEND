@@ -20,7 +20,6 @@ urlpatterns = [
     path('api/search/user/backward', user_views.search_user_backward, name="search_user_backward"),
     path('api/user', user_views.create_user, name="create_user"),
     path('api/get/user/by_id', user_views.get_user_by_id, name="get_user_by_id"),
-    path('api/get/users/by_max_id', user_views.get_user_by_max_id, name="get_users_by_max_id"),
     path('api/sign_in', user_views.sign_in, name="sign_in"),
     # USER
 
@@ -56,7 +55,7 @@ urlpatterns = [
 
     # REPOSITORY
     path('api/repository', RepositoryViews.get_repository, name="read_repository"),
-    path('api/repository', RepositoryViews.create_repository, name="create_repository"),
+    path('api/create/repository', RepositoryViews.create_repository, name="create_repository"),
     path('api/group/repositories', RepositoryViews.read_group_repositories, name="read_group_repositories"),
     # REPOSITORY
 
@@ -75,6 +74,6 @@ urlpatterns = [
 
     # COLUMN
     path('api/branch/update/column', ColumnViews.update_column, name="update_column"),
-    path('api/branch/column', ColumnViews.create_column, name="create_column"),
+    path('api/branch/create/column', ColumnViews.create_column, name="create_column"),
     # COLUMN
 ]
