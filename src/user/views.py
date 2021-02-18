@@ -1,6 +1,5 @@
 import time
 import datetime
-
 import jwt
 from rest_framework import status
 from rest_framework.decorators import (api_view as route)
@@ -71,15 +70,18 @@ def update_profile(request):
     return HttpResponse(status=response)
 
 
-@route(['PATCH'])
+@route(['GET'])
 def get_user_by_id(request):
-    data = UserReader.UserReadService.read_user_by_id(request.data['user_id'])
-    return callRespond(data)
+    data = UserReader.UserReadService.read_user_by_id(int(request.GET.get('user_id')))
+    if data is not None:
+        return callRespond(data)
+    else:
+        return callRespond(status=404)
 
 
 @route(['GET'])
 def get_users(request):
-    if int(request.GET.get('max_id')) is None:
+    if request.GET.get('max_id') is None:
         return callRespond(UserReader.UserReadService.read_users())
     else:
         return callRespond(UserReader.UserReadService.read_user_by_max_id(int(request.GET.get('max_id'))))
